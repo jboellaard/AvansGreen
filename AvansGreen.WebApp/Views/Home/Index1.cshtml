@@ -1,0 +1,60 @@
+﻿@model LoginModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AvansGreen</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AvansGreen.styles.css" asp-append-version="true" />
+</head>
+<body style="background-color:aliceblue">
+    <header>
+        
+    </header>
+    <div>
+        <main role="main" class="p-5">
+            <div class="text-center">
+                <img src="~/logo.png" style="max-height:70px" alt="Logo" />
+                <h2>Welcome to Avans Green!</h2>
+                <p class="intro-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut 
+                    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco 
+                    laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in 
+                    voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat 
+                    non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+            <div class="border justify-content-center login-form" style="background-color:white">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-student-tab" data-bs-toggle="tab" data-bs-target="#nav-student" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Student</button>
+                        <button class="nav-link" id="nav-employee-tab" data-bs-toggle="tab" data-bs-target="#nav-employee" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Canteen Employee</button>
+                    </div>
+                </nav>
+                <div class="tab-content p-4 pt-0" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-student" role="tabpanel" aria-labelledby="nav-student-tab">
+                        @{Model.UserType = TypeOfUser.Student;}
+                        <partial name="_LoginForm" model="Model" />
+                    </div>
+                    <div class="tab-pane fade" id="nav-employee" role="tabpanel" aria-labelledby="nav-employee-tab">
+                        @{Model.UserType = TypeOfUser.Employee;}
+                        <partial name="_LoginForm" model="Model" />
+                    </div>
+                </div>
+                
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer text-muted">
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Domain
+﻿namespace Core.Domain
 {
-    internal class CanteenWorker
+    class CanteenWorker
     {
+        public string EmailAddress { get; set; }
+        public string EmployeeNr { get; set; }
+        public Canteen canteen { get; set; }
     }
 }

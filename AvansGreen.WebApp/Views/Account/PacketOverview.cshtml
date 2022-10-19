@@ -1,0 +1,134 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<nav aria-label="breadcrumb" class="border-bottom">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Packet overview</li>
+  </ol>
+</nav>
+
+<div class="row mt-3">
+    <div class="col-4 ">
+        <div class="row justify-content-start" id="filter-sort-example-filters" data-mdb-auto-filter="true">
+            <div class="col-md-6" data-mdb-filter="color">
+                <span class="fa-lg">Filter: 1</span>
+
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" name="filterSortRadioOptions" id="filterSortRadio1" value="black">
+                    <label class="form-check-label" for="filterSortRadio1">Item 1</label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="filterSortRadioOptions" id="filterSortRadio2" value="red">
+                    <label class="form-check-label" for="filterSortRadio2">Item 2</label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="filterSortRadioOptions" id="filterSortRadio3" value="blue">
+                    <label class="form-check-label" for="filterSortRadio3">Item 3</label>
+                </div>
+
+            </div>
+
+            <div class="col-md-6" data-mdb-filter="sale">
+                <span class="fa-lg mb-5">Filter: 2</span>
+
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" name="filterSortRadioOptions2" id="filterSortRadio5" value="yes">
+                    <label class="form-check-label" for="filterSortRadio5">Item 1</label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="filterSortRadioOptions2" id="filterSortRadio6" value="no">
+                    <label class="form-check-label" for="filterSortRadio6">Item 2</label>
+                </div>
+                
+            </div>
+
+            <div class="col-12">
+            <button type="button" class="btn btn-primary mt-3" id="filterSortReset">
+                Clear all filters
+            </button>
+            </div>
+
+            <div class="col-12 my-3">
+                <div class="row">
+                    <div class="col-auto container-p">Sort by</div>
+                    <div class="col">
+                        <select class="form-select" aria-label="Sort by">
+                            <option selected>Date descending</option>
+                            <option value="1">Date ascending</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-8 border-start">
+        <h2 class="pb-2">Available packets</h2>
+        @*<div class="card-deck">*@
+            @*<div class="d-grid gap-2 col-6">*@
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some information about the packet.</p>
+                        <button class="btn btn-primary col-12" type="submit">Read more</button>
+                    </div>
+                    @*<div class="card-footer">
+                        <button class="btn btn-primary col-12" type="submit">Read more</button>
+                    </div>*@
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some information about the packet.</p>
+                        <button class="btn btn-primary col-12" type="submit">Read more</button>
+                    </div>
+                    @*<div class="card-footer">
+                    <button class="btn btn-primary col-12" type="submit">Read more</button>
+                    </div>*@
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some information about the packet.</p>
+                        <button class="btn btn-primary col-12" type="submit">Read more</button>
+                    </div>
+                    @*<div class="card-footer">
+                    <button class="btn btn-primary col-12" type="submit">Read more</button>
+                    </div>*@
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some information about the packet.</p>
+                        <button class="btn btn-primary col-12" type="submit">Read more</button>
+                    </div>
+                    @*<div class="card-footer">
+                        <button class="btn btn-primary col-12" type="submit">Read more</button>
+                    </div>*@
+                </div>
+            </div>
+            @*</div>*@
+        </div>
+    </div>
+
+</div>

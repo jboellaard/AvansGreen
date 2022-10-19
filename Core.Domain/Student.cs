@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Domain
+﻿namespace Core.Domain
 {
-    internal class Student
+    class Student
     {
+        public string EmailAddress { get; set; }
+        public string StudentNr { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public string FullName { get; set; }
+        public City CityOfSchool { get; set; }
+        public string PhoneNr { get; set; }
     }
 }

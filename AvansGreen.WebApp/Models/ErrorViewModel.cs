@@ -1,4 +1,4 @@
-namespace AvansGreen.Models
+namespace AvansGreen.WebApp.Models
 {
     public class ErrorViewModel
     {

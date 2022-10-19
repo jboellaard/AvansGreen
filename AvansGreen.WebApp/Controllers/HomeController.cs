@@ -1,8 +1,8 @@
-﻿using AvansGreen.Models;
+﻿using AvansGreen.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace AvansGreen.Controllers
+namespace AvansGreen.WebApp.Controllers
 {
     public class HomeController : Controller
     {
@@ -15,10 +15,15 @@ namespace AvansGreen.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View(new LoginModel());
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Profile()
         {
             return View();
         }

@@ -1,0 +1,30 @@
+﻿@model LoginModel
+
+<div class="text-danger" asp-validation-summary="All"></div>
+
+<form asp-action="Login@(Model.UserType)" asp-controller="Account" method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="form-group pb-3 row">
+        <label asp-for="Name" class="col-4 align-self-center"></label>
+        <div class="col-8">
+            <input asp-for="Name" class="form-control" />
+        </div>
+        <div class="col-12"><span asp-validation-for="Name" class="text-danger"></span></div>
+    </div>
+    <div class="form-group pb-3 row">
+        <label asp-for="Password" class="col-4 align-self-center"></label>
+        <div class="col-8"><input asp-for="Password" class="form-control" /></div>
+        <div><span asp-validation-for="Password" class="text-danger"></span></div>
+    </div>
+    <div class="row">
+        <div class="col-4"><button class="btn btn-primary col-12" type="submit">Log In</button></div>
+        <div class="col container-p justify-content-end">
+            <p style="font-size:14px" id="register-p">
+                No account?
+                <a asp-action="Register@(Model.UserType)" asp-controller="Account"> Register as @(Model.UserType)</a>
+            </p>
+        </div>
+    </div>
+</form>
+
+
