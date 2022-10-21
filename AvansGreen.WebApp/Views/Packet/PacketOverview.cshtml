@@ -1,7 +1,6 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<Packet>
 @{
+    
 }
 
 <nav aria-label="breadcrumb" class="border-bottom">
@@ -72,62 +71,22 @@
     
     <div class="col-8 border-start">
         <h2 class="pb-2">Available packets</h2>
-        @*<div class="card-deck">*@
-            @*<div class="d-grid gap-2 col-6">*@
         <div class="row row-cols-1 row-cols-md-2 g-4">
-            <div class="col">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                        <p class="card-text">Some information about the packet.</p>
-                        <button class="btn btn-primary col-12" type="submit">Read more</button>
-                    </div>
-                    @*<div class="card-footer">
-                        <button class="btn btn-primary col-12" type="submit">Read more</button>
-                    </div>*@
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                        <p class="card-text">Some information about the packet.</p>
-                        <button class="btn btn-primary col-12" type="submit">Read more</button>
-                    </div>
-                    @*<div class="card-footer">
+            @foreach(Packet packet in Model) {
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@(packet.Name)</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">@(packet.Price)</h6>
+                            <p class="card-text">Some information about the packet.</p>
+                            <a class="btn btn-primary col-12" asp-action="PacketDetail" asp-controller="Packet" asp-route-Id="@(packet.Id)">Read more</a>
+                        </div>
+                        @*<div class="card-footer">
                     <button class="btn btn-primary col-12" type="submit">Read more</button>
                     </div>*@
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                        <p class="card-text">Some information about the packet.</p>
-                        <button class="btn btn-primary col-12" type="submit">Read more</button>
                     </div>
-                    @*<div class="card-footer">
-                    <button class="btn btn-primary col-12" type="submit">Read more</button>
-                    </div>*@
                 </div>
-            </div>
-            <div class="col">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                        <p class="card-text">Some information about the packet.</p>
-                        <button class="btn btn-primary col-12" type="submit">Read more</button>
-                    </div>
-                    @*<div class="card-footer">
-                        <button class="btn btn-primary col-12" type="submit">Read more</button>
-                    </div>*@
-                </div>
-            </div>
-            @*</div>*@
+            }
         </div>
     </div>
 

@@ -1,20 +1,18 @@
-﻿using AvansGreen.WebApp.Models;
+﻿using Core.Domain;
 using Core.DomainServices.IRepos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace AvansGreen.WebApp.Controllers
 {
-    public class HomeController : Controller
+    public class PacketController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<PacketController> _logger;
         private readonly IPacketRepository _packetRepository;
         private readonly IProductRepository _productRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly ICanteenEmployeeRepository _canteenWorkerRepository;
 
-        public HomeController(ILogger<HomeController> logger,
+        public PacketController(ILogger<PacketController> logger,
             IPacketRepository packetRepository,
             IProductRepository productRepository,
             IStudentRepository studentRepository,
@@ -25,30 +23,15 @@ namespace AvansGreen.WebApp.Controllers
             _productRepository = productRepository;
             _studentRepository = studentRepository;
             _canteenWorkerRepository = canteenWorkerRepository;
-
+        }
+        public IActionResult PacketOverview()
+        {
+            return View(_packetRepository.GetPackets().ToList());
         }
 
-        [Authorize(Policy = "OnlyStudentsAndUp")]
-        public IActionResult Index()
+        public IActionResult PacketDetail(Packet packet)
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [Authorize]
-        public IActionResult Profile()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(_packetRepository.GetById(packet.Id));
         }
     }
 }

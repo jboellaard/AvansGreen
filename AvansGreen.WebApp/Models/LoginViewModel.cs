@@ -3,10 +3,10 @@
 namespace AvansGreen.WebApp.Models
 {
 
-    public class LoginModel
+    public class LoginViewModel
     {
         [Required]
-        public string Name { get; set; }
+        public string Email { get; set; }
 
         [Required]
         [UIHint("password")]
@@ -14,7 +14,7 @@ namespace AvansGreen.WebApp.Models
 
         public string ReturnUrl { get; set; } = "/";
 
-        public TypeOfUser UserType { get; set; }
+        public TypeOfUser TypeOfUser { get; set; }
     }
 
 }
