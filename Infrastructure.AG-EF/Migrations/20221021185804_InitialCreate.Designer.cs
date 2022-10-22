@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.AG_EF.Migrations
 {
     [DbContext(typeof(AvansGreenDbContext))]
-    [Migration("20221020182743_InitialCreate")]
+    [Migration("20221021185804_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,13 +83,9 @@ namespace Infrastructure.AG_EF.Migrations
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("EmployeeNr")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -97,32 +93,39 @@ namespace Infrastructure.AG_EF.Migrations
 
                     b.HasIndex("CanteenId");
 
+                    b.HasIndex("EmailAddress")
+                        .IsUnique();
+
                     b.ToTable("CanteenEmployees");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CanteenId = 1,
-                            EmailAddress = "n.devries@avans.nl",
-                            EmployeeNr = "1234567",
-                            Name = "n.devries"
+                            CanteenId = 3,
+                            EmailAddress = "adminmail@avans.nl",
+                            EmployeeNr = "0000000"
                         },
                         new
                         {
                             Id = 2,
-                            CanteenId = 2,
-                            EmailAddress = "p.smit@avans.nl",
-                            EmployeeNr = "1111111",
-                            Name = "p.smit"
+                            CanteenId = 1,
+                            EmailAddress = "n.devries@avans.nl",
+                            EmployeeNr = "1234567"
                         },
                         new
                         {
                             Id = 3,
+                            CanteenId = 2,
+                            EmailAddress = "p.smit@avans.nl",
+                            EmployeeNr = "1234567"
+                        },
+                        new
+                        {
+                            Id = 4,
                             CanteenId = 4,
                             EmailAddress = "l.degroot@avans.nl",
-                            EmployeeNr = "2222222",
-                            Name = "l.degroot"
+                            EmployeeNr = "1234567"
                         });
                 });
 
@@ -134,7 +137,7 @@ namespace Infrastructure.AG_EF.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CanteenId")
+                    b.Property<int>("CanteenEmployeeId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsAlcoholic")
@@ -150,13 +153,14 @@ namespace Infrastructure.AG_EF.Migrations
                     b.Property<DateTime>("PickUpTimeStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Price")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
 
                     b.Property<int?>("StudentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("TimeOfPickUpByStudent")
+                    b.Property<DateTime?>("TimeOfPickUpByStudent")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TypeOfMeal")
@@ -164,7 +168,7 @@ namespace Infrastructure.AG_EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CanteenId");
+                    b.HasIndex("CanteenEmployeeId");
 
                     b.HasIndex("StudentId");
 
@@ -174,25 +178,23 @@ namespace Infrastructure.AG_EF.Migrations
                         new
                         {
                             Id = 1,
-                            CanteenId = 1,
+                            CanteenEmployeeId = 3,
                             IsAlcoholic = false,
                             Name = "Alcoholic beverage and snack",
                             PickUpTimeEnd = new DateTime(2022, 10, 20, 20, 0, 0, 0, DateTimeKind.Unspecified),
                             PickUpTimeStart = new DateTime(2022, 10, 20, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            Price = 5.0,
-                            TimeOfPickUpByStudent = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Price = 5.0m,
                             TypeOfMeal = 2
                         },
                         new
                         {
                             Id = 2,
-                            CanteenId = 2,
+                            CanteenEmployeeId = 2,
                             IsAlcoholic = false,
                             Name = "Lunch with two sandwiches",
                             PickUpTimeEnd = new DateTime(2022, 10, 21, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             PickUpTimeStart = new DateTime(2022, 10, 21, 13, 0, 0, 0, DateTimeKind.Unspecified),
-                            Price = 5.5,
-                            TimeOfPickUpByStudent = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Price = 5.5m,
                             TypeOfMeal = 0
                         });
                 });
@@ -317,9 +319,9 @@ namespace Infrastructure.AG_EF.Migrations
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -328,9 +330,15 @@ namespace Infrastructure.AG_EF.Migrations
 
                     b.Property<string>("StudentNr")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmailAddress")
+                        .IsUnique();
+
+                    b.HasIndex("StudentNr")
+                        .IsUnique();
 
                     b.ToTable("Students");
 
@@ -340,38 +348,46 @@ namespace Infrastructure.AG_EF.Migrations
                             Id = 1,
                             CityOfSchool = 0,
                             DateOfBirth = new DateTime(1998, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAddress = "je.boellaard@student.avans.nl",
-                            Name = "Joy Boellaard",
-                            PhoneNr = "0612345678",
-                            StudentNr = "2182556"
+                            EmailAddress = "adminmail@avans.nl",
+                            FullName = "Admin",
+                            StudentNr = "0000000"
                         },
                         new
                         {
                             Id = 2,
                             CityOfSchool = 0,
+                            DateOfBirth = new DateTime(1998, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAddress = "je.boellaard@student.avans.nl",
+                            FullName = "Joy Boellaard",
+                            PhoneNr = "0612345678",
+                            StudentNr = "2182556"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CityOfSchool = 0,
                             DateOfBirth = new DateTime(2000, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAddress = "em.degroot@student.avans.nl",
-                            Name = "Emma de Groot",
+                            FullName = "Emma de Groot",
                             PhoneNr = "0623456789",
                             StudentNr = "2192233"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 4,
                             CityOfSchool = 1,
                             DateOfBirth = new DateTime(2001, 3, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAddress = "b.dejong@student.avans.nl",
-                            Name = "Ben de Jong",
-                            PhoneNr = "0634567890",
+                            FullName = "Ben de Jong",
                             StudentNr = "2192344"
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 5,
                             CityOfSchool = 0,
                             DateOfBirth = new DateTime(1999, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAddress = "d.li@student.avans.nl",
-                            Name = "Diana Li",
+                            FullName = "Diana Li",
                             PhoneNr = "0645678901",
                             StudentNr = "2184399"
                         });
@@ -390,19 +406,19 @@ namespace Infrastructure.AG_EF.Migrations
 
             modelBuilder.Entity("Core.Domain.Packet", b =>
                 {
-                    b.HasOne("Core.Domain.Canteen", "Canteen")
-                        .WithMany()
-                        .HasForeignKey("CanteenId")
+                    b.HasOne("Core.Domain.CanteenEmployee", "CanteenEmployee")
+                        .WithMany("CreatedPackets")
+                        .HasForeignKey("CanteenEmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Student", "ReservedBy")
-                        .WithMany()
+                    b.HasOne("Core.Domain.Student", "Student")
+                        .WithMany("ReservedPackets")
                         .HasForeignKey("StudentId");
 
-                    b.Navigation("Canteen");
+                    b.Navigation("CanteenEmployee");
 
-                    b.Navigation("ReservedBy");
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Core.Domain.PacketProduct", b =>
@@ -424,9 +440,19 @@ namespace Infrastructure.AG_EF.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Core.Domain.CanteenEmployee", b =>
+                {
+                    b.Navigation("CreatedPackets");
+                });
+
             modelBuilder.Entity("Core.Domain.Packet", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Core.Domain.Student", b =>
+                {
+                    b.Navigation("ReservedPackets");
                 });
 #pragma warning restore 612, 618
         }

@@ -35,9 +35,9 @@ builder.Services.AddAuthorization(options =>
         .RequireAuthenticatedUser()
         .RequireClaim("UserType", new string[] { "Student", "Admin" }));
 
-    options.AddPolicy("OnlyCanteenWorkersAndUp", policy => policy
+    options.AddPolicy("OnlyCanteenEmployeesAndUp", policy => policy
         .RequireAuthenticatedUser()
-        .RequireClaim("UserType", new string[] { "CanteenWorker", "Admin" }));
+        .RequireClaim("UserType", new string[] { "CanteenEmployee", "Admin" }));
 });
 builder.Services.AddScoped<AuthDbSeed>();
 builder.Services.AddScoped<ICanteenEmployeeRepository, CanteenEmployeeEFRepository>();

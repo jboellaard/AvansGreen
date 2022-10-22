@@ -20,12 +20,12 @@ namespace Infrastructure.AG_EF
 
         public CanteenEmployee? GetById(int id)
         {
-            return _context.CanteenEmployees.SingleOrDefault(canteenWorker => canteenWorker.Id == id);
+            return _context.CanteenEmployees.Include(c => c.Canteen).Include(c => c.CreatedPackets).SingleOrDefault(canteenWorker => canteenWorker.Id == id);
         }
 
         public CanteenEmployee? GetByEmail(string email)
         {
-            return _context.CanteenEmployees.SingleOrDefault(canteenWorker => canteenWorker.EmailAddress == email);
+            return _context.CanteenEmployees.Include(c => c.Canteen).Include(c => c.CreatedPackets).SingleOrDefault(canteenWorker => canteenWorker.EmailAddress == email);
         }
     }
 }

@@ -1,49 +1,209 @@
-﻿@{
+﻿@model NewPacketViewModel
+@{
+    DateTime now = DateTime.Today.AddHours(17);
+
 }
 <div class="border justify-content-center mt-3 p-5 register-form" border-radius:5px;">
-    < <a asp-action="Index" asp-controller="Account">Return</a>
+    @*<a asp-action="Index" asp-controller="Account">Return</a>*@
     <div class="text-danger" asp-validation-summary="All"></div>
 
     <form class="g-3">
 
         <div class="form-group pb-3 row">
-            <label for="fullname" class="form-label col-4 align-self-center">Full name</label>
-            <div class="col-8"><input type="text" class="form-control" id="fullname"></div>
+            <label class="col-4 align-self-center" asp-for="Name">Packet name:</label>
+            <div class="col-8"><input class="form-control" required placeholder="Use a descriptive name" asp-for="Name" /></div>
         </div>
         <div class="form-group pb-3 row">
-            <label for="birthday" class="form-label col-4 align-self-center">Date of Birth</label>
+            <label class="col-12 align-self-center pb-1" asp-for="PickUpTimeStart">Date and time of pick-up:</label>
+            <span class="text-danger" id="pickupTimeError"></span>
+            <div class="d-flex">
+                <div>
+                    <select class="form-select" title="selectList" asp-for="DateOfPickUp">
+                        <option value="@(now)">Today</option>
+                        <option value="@(now.AddDays(1))">Tomorrow</option>
+                        <option value="@(now.AddDays(2))">Day after tomorrow</option>
+                    </select>
+                </div>
+                @*<div>*@
+                    <label class="align-self-center px-1">from</label>
+                    <input class="align-self-center" type="time" value="17:00" id="pickupTimeStart" name="pickupTimeStart" required>
+                    <label class="align-self-center px-1">to</label>
+                    <input class="align-self-center" type="time" value="20:00" id="pickupTimeEnd" name="pickupTimeEnd" required>
+                @*</div>*@
+            </div>
+            @*<input class="form-control" required value="@(now.ToString("MM-dd"))" asp-for="DateOfPickUp" />
+            <label class="visually-hidden" asp-for="PickUpTimeEnd"></label>
+            <div class="col-12 d-flex">
+                <input class="form-control" required value="@(now.ToString("yyyy-MM-ddTHH:mm"))" asp-for="PickUpTimeStart" />
+                <label class="align-self-center px-1"> to </label>
+                <input class="form-control" required max="@(now.AddDays(2))"  value="@(now.AddHours(3).ToString("yyyy-MM-ddTHH:mm"))" asp-for="PickUpTimeEnd" />
+            </div>*@
+            @*<label for="pickup" class="form-label col-4 align-self-center">Date of pick-up</label>
             <div class="col-8">
-                <input type="date" id="birthday" name="birthday">
+                <input type="date" id="pickup" name="pickup" required>
+            </div>*@
+        </div>
+        @*<div class="form-group pb-3 row">
+            <span id="pickupTimeError"></span>
+            <label for="pickupTimeStart" class="form-label col-4 align-self-center">Time of pick-up</label>
+            <div class="col-8">
+                <input type="time" id="pickupTimeStart" name="pickupTimeStart" required>
+                to       
+                <input type="time" id="pickupTimeEnd" name="pickupTimeEnd" required>
+            </div>
+        </div>*@
+        <div class="form-group pb-3 row">
+                <label for="myMultiselect">Select products</label>
+                <span id="selectedOptions"></span>
+                <div id="myMultiselect" class="multiselect">
+                    <div id="mySelectLabel" class="selectBox" onclick="toggleCheckboxArea()">
+                        <select class="form-select">
+                            <option>somevalue</option>
+                        </select>
+                        <div class="overSelect"></div>
+                    </div>
+                    <div id="mySelectOptions">
+                    @*@foreach (var product in Model.AllProducts)*@
+                    @for (var i = 0; i < Model.AllProducts.Count; i++)
+                    {
+                        <label asp-for="@Model.AllProducts.ElementAt(i).Selected">
+                            <input type="checkbox" onchange="checkboxStatusChange()" value="@(Model.AllProducts.ElementAt(i).Product.Id)" asp-for="@(Model.AllProducts.ElementAt(i).Selected)" />
+                            @Model.AllProducts.ElementAt(i).Product.Name
+                        </label>
+                        @*<input type="hidden" asp-for="@Model.AllProducts.ElementAt(i).Product.Id" />*@
+                        @*<input type="hidden" asp-for="@Model.AllProducts.ElementAt(i).Product.Name" />*@
+                        @*<label for="@(product.Id)"><input type="checkbox" id="@(product.Id)" onchange="checkboxStatusChange()" value="@(product.Id)" />@(product.Name)</label>*@
+                    }
+                    </div>
+                </div>
+            @*</div>*@
+        </div>
+        <div class="form-group pb-3 row">
+            <label class="col-4 align-self-center" asp-for="TypeOfMeal">Type of meal:</label>
+            <div class="col-8">
+                <select class="form-select" title="selectList" asp-for="TypeOfMeal" asp-items="@ViewBag.MealTypes"></select>
             </div>
         </div>
         <div class="form-group pb-3 row">
-            <label for="inputstudentNr" class="form-label col-4 align-self-center">Student nr</label>
-            <div class="col-8"><input type="text" class="form-control" id="inputstudentNr"></div>
-        </div>
-        <div class="form-group pb-3 row">
-            <label for="inputEmail4" class="form-label col-4 align-self-center">Email</label>
-            <div class="col-8">
-                <input type="email" class="form-control" id="inputEmail4">
+            <div class="col-4">
+                <div class="form-group d-flex">
+                    <label class="form-check-label align-self-center" for="flexSwitchCheckReverse">18+</label>
+                    <div class="form-switch align-self-center m-2"><input class="form-check-input" type="checkbox" id="flexSwitchCheckReverse"></div>
+                </div>
             </div>
+            <label for="price" class="form-label col-2 align-self-center">Price</label>
+            <div class="col-6 align-self-center"><input type="number" class="form-control" id="price" pattern="[0-9]+(\.[0-9][0-9]?)?" required placeholder="0.00"></div>
         </div>
-        <div class="form-group pb-3 row">
-            <label for="inputCity" class="form-label col-4 align-self-center">City of school</label>
-            <div class="col-8">
-                <select class="form-select" aria-label="City of school" id="inputCity">
-                    <option selected>Breda</option>
-                    <option value="1">Tilburg</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group pb-3 row">
-            <label for="phoneNumber" class="form-label col-4 align-self-center ">Phone number</label>
-            <div class="col-8">
-                <input type="text" class="form-control" id="phoneNumber">
-            </div>
-        </div>
-
         <div class="col-12">
-            <button type="submit" class="btn btn-primary">Sign in</button>
+            <button type="submit" class="btn btn-primary">Create packet</button>
         </div>
     </form>
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+        window.onload = (event) => {
+            initMultiselect();
+        };
+
+        function initMultiselect() {
+            checkboxStatusChange();
+
+            document.addEventListener("click", function (evt) {
+                var flyoutElement = document.getElementById('myMultiselect'),
+                    targetElement = evt.target; // clicked element
+
+                do {
+                    if (targetElement == flyoutElement) {
+                        // This is a click inside. Do nothing, just return.
+                        //console.log('click inside');
+                        return;
+                    }
+
+                    // Go up the DOM
+                    targetElement = targetElement.parentNode;
+                } while (targetElement);
+
+                // This is a click outside.
+                toggleCheckboxArea(true);
+                //console.log('click outside');
+            });
+        }
+
+        function checkboxStatusChange() {
+            var multiselect = document.getElementById("mySelectLabel");
+            var selectedOptionsAbove = document.getElementById("selectedOptions");
+            var multiselectOption = multiselect.getElementsByTagName('option')[0];
+
+            var values = [];
+            var labeltexts = [];
+            var checkboxes = document.getElementById("mySelectOptions");
+            var checkedCheckboxes = checkboxes.querySelectorAll('input[type=checkbox]:checked');
+
+            for (const item of checkedCheckboxes) {
+                var checkboxValue = item.getAttribute('value');
+                values.push(checkboxValue);
+                var label = document.querySelector("label[for='" + item.getAttribute('id') + "']").textContent;
+                labeltexts.push(label);
+            }
+
+            var dropdownValue = "Nothing is selected";
+            var labels = "";
+            if (values.length > 0) {
+                dropdownValue = values.join(', ');
+                labels = labeltexts.join(', ');
+            }
+
+            multiselectOption.innerText = dropdownValue;
+            selectedOptionsAbove.innerText = labels;
+        }
+
+        function toggleCheckboxArea(onlyHide = false) {
+            var checkboxes = document.getElementById("mySelectOptions");
+            var displayValue = checkboxes.style.display;
+
+            if (displayValue != "block") {
+                if (onlyHide == false) {
+                    checkboxes.style.display = "block";
+                }
+            } else {
+                checkboxes.style.display = "none";
+            }
+        }
+
+        var timeError = document.getElementById("pickupTimeError");
+
+        $("#pickupTimeStart").on("change", function () {
+            timeError.innerHTML = "";
+            var timeval = new Date(this.valueAsDate);
+            var endInput = document.querySelector("#pickupTimeEnd");            
+            if (endInput.value != "") {
+                var end = new Date(endInput.valueAsDate);
+                if (timeval >= end) {
+                    timeError.innerHTML = "The ending time should be after the start.";
+                }
+            }
+        }); 
+        $("#pickupTimeEnd").on("change", function () {
+            timeError.innerHTML = "";
+            var timeval = new Date(this.valueAsDate);
+            var startInput = document.querySelector("#pickupTimeStart");
+            if (startInput.value != "") {
+                var start = new Date(startInput.valueAsDate);
+                if (timeval <= start) {
+                    timeError.innerHTML = "The ending time should be after the start.";
+                }
+            }
+        });
+        $("input[type=time]").on("change", function () {
+            timeError.innerHTML = "";
+            var timeval = new Date(this.valueAsDate);
+            console.log(timeval.getUTCHours());
+            if (!((timeval.getUTCHours() < 20 && timeval.getUTCHours() >= 8) || (timeval.getUTCHours() == 20 && timeval.getUTCMinutes() == 0))) {
+                console.log("hello");
+                timeError.innerHTML = "<p>Please enter a time after 08:00 and before 20:00.</p>";
+            }
+        });
+    </script>
+}

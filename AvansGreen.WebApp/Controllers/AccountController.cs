@@ -50,10 +50,10 @@ public class AccountController : Controller
                 {
                     var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
                     var claims = claimsPrincipal.Claims.ToList();
-                    //var currentUser = new UserViewModel() { DisplayName = loginModel.Email.Split("@")[0] };
-                    //if (claims.Any(x => x.Value == "Admin")) currentUser.TypeOfUser = TypeOfUser.Admin;
-                    //else if (claims.Any(x => x.Value == "CanteenEmployee")) currentUser.TypeOfUser = TypeOfUser.CanteenEmployee;
-                    //else if (claims.Any(x => x.Value == "Student")) currentUser.TypeOfUser = TypeOfUser.Student;
+                    //var currentUserVM = new CurrentUserViewModel() { Email = user.Email };
+                    //if (claims.Any(x => x.Value == "Admin")) currentUserVM.TypeOfUser = TypeOfUser.Admin;
+                    //else if (claims.Any(x => x.Value == "CanteenEmployee")) currentUserVM.TypeOfUser = TypeOfUser.CanteenEmployee;
+                    //else if (claims.Any(x => x.Value == "Student")) currentUserVM.TypeOfUser = TypeOfUser.Student;
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -63,10 +63,10 @@ public class AccountController : Controller
         return View(loginModel);
     }
 
-    public async Task<RedirectResult> BrowseAnonymously()
+    public async Task<IActionResult> BrowseAnonymously()
     {
         await _signInManager.SignOutAsync();
-        return Redirect("~/Packet/PacketOverview");
+        return RedirectToAction("PacketOverview", "Packet");
     }
 
 

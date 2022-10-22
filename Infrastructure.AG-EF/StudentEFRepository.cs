@@ -1,5 +1,6 @@
 ﻿using Core.Domain;
 using Core.DomainServices.IRepos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.AG_EF
 {
@@ -20,12 +21,12 @@ namespace Infrastructure.AG_EF
 
         public Student? GetById(int id)
         {
-            return _context.Students.SingleOrDefault(student => student.Id == id);
+            return _context.Students.Include(s => s.ReservedPackets).SingleOrDefault(student => student.Id == id);
         }
 
         public Student? GetByEmail(string email)
         {
-            return _context.Students.SingleOrDefault(student => student.EmailAddress == email);
+            return _context.Students.Include(s => s.ReservedPackets).SingleOrDefault(student => student.EmailAddress == email);
         }
 
     }

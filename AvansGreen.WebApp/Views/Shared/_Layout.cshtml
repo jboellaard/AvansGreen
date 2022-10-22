@@ -31,28 +31,59 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @{
-                            if (User.FindFirst("UserType")?.Value == "Student")
-                            {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Packet" asp-action="Reservations">My reservations</a>
-                            </li>
-                        } }
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        @if (!User.Identity.IsAuthenticated) {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
-                        } else {
+                        @{ if (User.Identity.IsAuthenticated) {
                             <li class="dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
-                                    @(displayName) 
-                                    <span class="caret"></span></a>
+                                    Packets
+                                    <span class="caret"></span>
+                                </a>
                                 <ul class="dropdown-menu">
-                                  <li><a class="dropdown-item" href="#">Profile</a></li>
-                                  <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout">Log out</a></li>
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="PacketOverview">All packets</a>
+                                        </li>
+                                    @{
+                                    if (User.FindFirst("UserType")?.Value is "Student" or "Admin")
+                                    {
+                                                <li>
+                                                    <a a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="Reservations">My reservations</a>
+                                                </li>
+                                    }
+                                    if (User.FindFirst("UserType")?.Value is "CanteenEmployee" or "Admin")
+                                    {
+                                                <li>
+                                                    <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="MyPackets">My packets</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="AddPacket">Add new packet</a>
+                                                </li>
+                                    }
+                                    }
                                 </ul>
+                            </li>
+                        } else {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Packet" asp-action="PacketOverview">Packet overview</a>
+                            </li>
+                        }
+                        } 
+                        
+                        
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        @if (User.Identity.IsAuthenticated) {
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                                    @(displayName)
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Profile">Profile</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout">Log out</a></li>
+                                </ul>
+                            </li>
+                        } else {                            
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
                             </li>
                         }
                     </ul>
@@ -66,7 +97,7 @@
         </main>
     </div>
 
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top nav-elements-container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 mt-4 border-top nav-elements-container">
         <div class="cold-md-4 d-flex align-items-center">
             <span>&copy; 2022 - AvansGreen - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></span>
         </div>

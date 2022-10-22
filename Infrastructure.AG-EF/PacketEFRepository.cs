@@ -16,37 +16,32 @@ namespace Infrastructure.AG_EF
 
         public IEnumerable<Packet> GetPackets()
         {
-            return _context.Packets;
+            return _context.Packets.Include(p => p.Student).Include(p => p.CanteenEmployee).ThenInclude(c => c.Canteen).Include(p => p.Products);
         }
 
         public Packet? GetById(int id)
         {
-            return _context.Packets.SingleOrDefault(packet => packet.Id == id);
+            return _context.Packets.Include(p => p.Student).Include(p => p.CanteenEmployee).ThenInclude(c => c.Canteen).Include(p => p.Products).SingleOrDefault(packet => packet.Id == id);
         }
 
-        public void PreLoad()
-        {
-            var firstPacket = _context.Packets.FirstOrDefault();
+        //public void PreLoad()
+        //{
+        //    var firstPacket = _context.Packets.FirstOrDefault();
 
-            if (firstPacket != null)
-            {
-                _context.Entry(firstPacket).Collection(packet => packet.Products).Load();
-                _context.Entry(firstPacket).Reference(packet => packet.ReservedBy).Load();
-            }
-        }
-
-        public IQueryable<Packet> GetAll()
-        {
-            return _context.Packets.Include(p => p.ReservedBy).Include(p => p.Products).Include(p => p.Canteen);
-        }
+        //    if (firstPacket != null)
+        //    {
+        //        _context.Entry(firstPacket).Collection(packet => packet.Products).Load();
+        //        _context.Entry(firstPacket).Reference(packet => packet.ReservedByStudent).Load();
+        //    }
+        //}
 
         public IEnumerable<Packet> Filter(Func<Packet, bool> filterExpression)
         {
-            foreach (var game in _context.Packets)
+            foreach (var packet in _context.Packets)
             {
-                if (filterExpression(game))
+                if (filterExpression(packet))
                 {
-                    yield return game;
+                    yield return packet;
                 }
             }
         }

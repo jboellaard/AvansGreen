@@ -12,25 +12,34 @@ namespace AvansGreen.WebApp.Controllers
         private readonly IPacketRepository _packetRepository;
         private readonly IProductRepository _productRepository;
         private readonly IStudentRepository _studentRepository;
-        private readonly ICanteenEmployeeRepository _canteenWorkerRepository;
+        private readonly ICanteenEmployeeRepository _canteenEmployeeRepository;
 
         public HomeController(ILogger<HomeController> logger,
             IPacketRepository packetRepository,
             IProductRepository productRepository,
             IStudentRepository studentRepository,
-            ICanteenEmployeeRepository canteenWorkerRepository)
+            ICanteenEmployeeRepository canteenEmployeeRepository)
         {
             _logger = logger;
             _packetRepository = packetRepository;
             _productRepository = productRepository;
             _studentRepository = studentRepository;
-            _canteenWorkerRepository = canteenWorkerRepository;
+            _canteenEmployeeRepository = canteenEmployeeRepository;
 
         }
 
-        [Authorize(Policy = "OnlyStudentsAndUp")]
+        [Authorize]
         public IActionResult Index()
         {
+            //if (currentUserViewModel.TypeOfUser is TypeOfUser.Student or TypeOfUser.Admin)
+            //{
+            //    currentUserViewModel.Student = _studentRepository.GetByEmail(currentUserViewModel.Email);
+            //}
+            //if (currentUserViewModel.TypeOfUser is TypeOfUser.CanteenEmployee or TypeOfUser.Admin)
+            //{
+            //    currentUserViewModel.CanteenEmployee = _canteenEmployeeRepository.GetByEmail(currentUserViewModel.Email);
+            //}
+
             return View();
         }
 

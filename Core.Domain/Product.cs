@@ -6,5 +6,10 @@
         public string Name { get; set; }
         public bool IsAlcoholic { get; set; } = false;
         public byte[]? ImageData { get; set; }
+
+        public Product(string name)
+        {
+            Name = name;
+        }
     }
 }
