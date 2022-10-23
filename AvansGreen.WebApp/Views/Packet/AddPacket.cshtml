@@ -1,13 +1,13 @@
 ﻿@model NewPacketViewModel
 @{
-    DateTime now = DateTime.Today.AddHours(17);
+    DateTime today = DateTime.Today;
 
 }
 <div class="border justify-content-center mt-3 p-5 register-form" border-radius:5px;">
     @*<a asp-action="Index" asp-controller="Account">Return</a>*@
     <div class="text-danger" asp-validation-summary="All"></div>
 
-    <form class="g-3">
+    <form class="g-3" asp-action="AddPacket" asp-controller="Packet" method="post">
 
         <div class="form-group pb-3 row">
             <label class="col-4 align-self-center" asp-for="Name">Packet name:</label>
@@ -19,16 +19,16 @@
             <div class="d-flex">
                 <div>
                     <select class="form-select" title="selectList" asp-for="DateOfPickUp">
-                        <option value="@(now)">Today</option>
-                        <option value="@(now.AddDays(1))">Tomorrow</option>
-                        <option value="@(now.AddDays(2))">Day after tomorrow</option>
+                        <option value="@(today)">Today</option>
+                        <option value="@(today.AddDays(1))">Tomorrow</option>
+                        <option value="@(today.AddDays(2))">Day after tomorrow</option>
                     </select>
                 </div>
                 @*<div>*@
                     <label class="align-self-center px-1">from</label>
-                    <input class="align-self-center" type="time" value="17:00" id="pickupTimeStart" name="pickupTimeStart" required>
+                    <input class="align-self-center" type="time" value="@(today.AddHours(17).ToString("HH:mm"))" id="pickupTimeStart" asp-for="PickUpTimeStart" name="pickupTimeStart" required>
                     <label class="align-self-center px-1">to</label>
-                    <input class="align-self-center" type="time" value="20:00" id="pickupTimeEnd" name="pickupTimeEnd" required>
+                    <input class="align-self-center" type="time" value="@(today.AddHours(20).ToString("HH:mm"))" id="pickupTimeEnd" asp-for="PickUpTimeEnd" name="pickupTimeEnd" required>
                 @*</div>*@
             </div>
             @*<input class="form-control" required value="@(now.ToString("MM-dd"))" asp-for="DateOfPickUp" />
@@ -66,13 +66,7 @@
                     @*@foreach (var product in Model.AllProducts)*@
                     @for (var i = 0; i < Model.AllProducts.Count; i++)
                     {
-                        <label asp-for="@Model.AllProducts.ElementAt(i).Selected">
-                            <input type="checkbox" onchange="checkboxStatusChange()" value="@(Model.AllProducts.ElementAt(i).Product.Id)" asp-for="@(Model.AllProducts.ElementAt(i).Selected)" />
-                            @Model.AllProducts.ElementAt(i).Product.Name
-                        </label>
-                        @*<input type="hidden" asp-for="@Model.AllProducts.ElementAt(i).Product.Id" />*@
-                        @*<input type="hidden" asp-for="@Model.AllProducts.ElementAt(i).Product.Name" />*@
-                        @*<label for="@(product.Id)"><input type="checkbox" id="@(product.Id)" onchange="checkboxStatusChange()" value="@(product.Id)" />@(product.Name)</label>*@
+                        <label for="product-@(i)"><input type="checkbox" id="product-@(i)" onchange="checkboxStatusChange()" value="@(i)" />@(Model.AllProducts.ElementAt(i).Name)</label>
                     }
                     </div>
                 </div>
@@ -87,12 +81,12 @@
         <div class="form-group pb-3 row">
             <div class="col-4">
                 <div class="form-group d-flex">
-                    <label class="form-check-label align-self-center" for="flexSwitchCheckReverse">18+</label>
-                    <div class="form-switch align-self-center m-2"><input class="form-check-input" type="checkbox" id="flexSwitchCheckReverse"></div>
+                    <label class="form-check-label align-self-center" asp-for="IsAlcoholic">18+</label>
+                    <div class="form-switch align-self-center m-2"><input class="form-check-input" type="checkbox" asp-for="IsAlcoholic"></div>
                 </div>
             </div>
-            <label for="price" class="form-label col-2 align-self-center">Price</label>
-            <div class="col-6 align-self-center"><input type="number" class="form-control" id="price" pattern="[0-9]+(\.[0-9][0-9]?)?" required placeholder="0.00"></div>
+            <label asp-for="Price" class="form-label col-2 align-self-center">Price</label>
+            <div class="col-6 align-self-center"><input asp-for="Price" class="form-control" pattern="[0-9]+(\,[0-9][0-9]?)?" placeholder="0,00"></div>
         </div>
         <div class="col-12">
             <button type="submit" class="btn btn-primary">Create packet</button>
@@ -142,16 +136,17 @@
             var checkedCheckboxes = checkboxes.querySelectorAll('input[type=checkbox]:checked');
 
             for (const item of checkedCheckboxes) {
-                var checkboxValue = item.getAttribute('value');
-                values.push(checkboxValue);
+                //var checkboxValue = item.getAttribute('value');
+                //values.push(checkboxValue);
                 var label = document.querySelector("label[for='" + item.getAttribute('id') + "']").textContent;
                 labeltexts.push(label);
             }
 
             var dropdownValue = "Nothing is selected";
             var labels = "";
-            if (values.length > 0) {
-                dropdownValue = values.join(', ');
+            if (labeltexts.length > 0) {
+                if (labeltexts.length > 1) dropdownValue = labeltexts.length + " products";
+                else dropdownValue = "1 product";
                 labels = labeltexts.join(', ');
             }
 
@@ -174,8 +169,11 @@
 
         var timeError = document.getElementById("pickupTimeError");
 
-        $("#pickupTimeStart").on("change", function () {
+        $("input[type=time]").on("change", function () {
             timeError.innerHTML = "";
+        });
+
+        $("#pickupTimeStart").on("change", function () {
             var timeval = new Date(this.valueAsDate);
             var endInput = document.querySelector("#pickupTimeEnd");            
             if (endInput.value != "") {
@@ -186,7 +184,6 @@
             }
         }); 
         $("#pickupTimeEnd").on("change", function () {
-            timeError.innerHTML = "";
             var timeval = new Date(this.valueAsDate);
             var startInput = document.querySelector("#pickupTimeStart");
             if (startInput.value != "") {
@@ -196,8 +193,8 @@
                 }
             }
         });
+
         $("input[type=time]").on("change", function () {
-            timeError.innerHTML = "";
             var timeval = new Date(this.valueAsDate);
             console.log(timeval.getUTCHours());
             if (!((timeval.getUTCHours() < 20 && timeval.getUTCHours() >= 8) || (timeval.getUTCHours() == 20 && timeval.getUTCMinutes() == 0))) {

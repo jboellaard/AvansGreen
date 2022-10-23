@@ -8,5 +8,7 @@ namespace Core.DomainServices.IRepos
         IEnumerable<Packet> Filter(Func<Packet, bool> filterExpressie);
         Packet? GetById(int id);
         Task AddPacket(Packet packet);
+
+        Task AddProductsToPacket(IEnumerable<PacketProduct> packetProducts);
     }
 }

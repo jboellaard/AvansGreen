@@ -17,11 +17,10 @@ namespace AvansGreen.WebApp.Models
         [Required]
         public decimal Price { get; set; }
         public MealType TypeOfMeal { get; set; }
-        [Required]
         public CanteenEmployee? CanteenEmployee { get; set; }
         public ICollection<Product> Products { get; set; } = new List<Product>();
 
-        public ICollection<ProductCheckListViewModel> AllProducts { get; set; } = new List<ProductCheckListViewModel>();
+        public ICollection<Product> AllProducts { get; set; } = new List<Product>();
 
 
 

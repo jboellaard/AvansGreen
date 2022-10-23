@@ -51,5 +51,14 @@ namespace Infrastructure.AG_EF
             _context.Packets.Add(newPacket);
             await _context.SaveChangesAsync();
         }
+
+        public async Task AddProductsToPacket(IEnumerable<PacketProduct> packetProducts)
+        {
+            foreach (PacketProduct packetProduct in packetProducts)
+            {
+                _context.ProductsInPacket.Add(packetProduct);
+            }
+            await _context.SaveChangesAsync();
+        }
     }
 }

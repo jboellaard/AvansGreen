@@ -46,13 +46,7 @@ namespace AvansGreen.WebApp.Controllers
         [HttpGet]
         public IActionResult AddPacket()
         {
-            List<Product> products = _productRepository.GetProducts().ToList();
-            List<ProductCheckListViewModel> pcvm = new List<ProductCheckListViewModel>();
-            foreach (Product product in products)
-            {
-                pcvm.Add(new ProductCheckListViewModel(product));
-            }
-            var model = new NewPacketViewModel() { AllProducts = pcvm };
+            var model = new NewPacketViewModel() { AllProducts = _productRepository.GetProducts().ToList() };
 
             PrefillSelectOptions();
 
@@ -65,8 +59,7 @@ namespace AvansGreen.WebApp.Controllers
             {
                 Text = mt.ToString(),
                 Value = ((int)mt).ToString(),
-                Selected = false
-            }), "Value", "Text", "-1");
+            }), "Value", "Text");
             ViewBag.MealTypes = list;
         }
 
@@ -77,13 +70,20 @@ namespace AvansGreen.WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 try
                 {
-                    CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmail(User.Identity!.Name!);
+                    CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmail(User.Identity!.Name!.ToLower());
                     if (canteenEmployee != null)
                     {
-                        Packet newPacket = new(vm.Name, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, canteenEmployee);
+                        Packet newPacket = new(vm.Name!, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, canteenEmployee);
+
                         await _packetRepository.AddPacket(newPacket);
+                        _logger.LogInformation("Id " + newPacket.Id);
+                        //TODO: get products from checkboxes
+                        Product product = _productRepository.GetById(1)!;
+                        newPacket.Products.Add(new PacketProduct(newPacket.Id, product.Id));
+                        await _packetRepository.AddProductsToPacket(newPacket.Products);
                         return RedirectToAction("PacketOverview");
                     }
                 }
