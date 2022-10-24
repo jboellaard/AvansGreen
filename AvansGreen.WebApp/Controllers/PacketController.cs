@@ -46,14 +46,14 @@ namespace AvansGreen.WebApp.Controllers
         [HttpGet]
         public IActionResult AddPacket()
         {
-            var model = new NewPacketViewModel() { AllProducts = _productRepository.GetProducts().ToList() };
+            var model = new NewPacketViewModel();
 
-            PrefillSelectOptions();
+            PrefillSelectOptions(model);
 
             return View(model);
         }
 
-        private void PrefillSelectOptions()
+        private void PrefillSelectOptions(NewPacketViewModel vm)
         {
             var list = new SelectList(Enum.GetValues(typeof(MealType)).Cast<MealType>().Select(mt => new SelectListItem
             {
@@ -61,31 +61,34 @@ namespace AvansGreen.WebApp.Controllers
                 Value = ((int)mt).ToString(),
             }), "Value", "Text");
             ViewBag.MealTypes = list;
+
+            vm.AllProducts = _productRepository.GetProducts().ToList();
+
         }
 
         [Authorize(Policy = "OnlyCanteenEmployeesAndUp")]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> AddPacket(NewPacketViewModel vm)
+        public async Task<IActionResult> AddPacket(NewPacketViewModel vm, List<int> ProductIdList)
         {
             if (ModelState.IsValid)
             {
-
                 try
                 {
-                    CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmail(User.Identity!.Name!.ToLower());
-                    if (canteenEmployee != null)
+                    int? canteenEmployeeId = HttpContext.Session.GetInt32("CanteenEmployeeId");
+                    if (canteenEmployeeId != null)
                     {
-                        Packet newPacket = new(vm.Name!, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, canteenEmployee);
-
+                        Packet newPacket = new(vm.Name!, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, (int)canteenEmployeeId);
                         await _packetRepository.AddPacket(newPacket);
-                        _logger.LogInformation("Id " + newPacket.Id);
-                        //TODO: get products from checkboxes
-                        Product product = _productRepository.GetById(1)!;
-                        newPacket.Products.Add(new PacketProduct(newPacket.Id, product.Id));
+
+                        foreach (int id in ProductIdList)
+                        {
+                            newPacket.Products.Add(new PacketProduct(newPacket.Id, id));
+                        }
                         await _packetRepository.AddProductsToPacket(newPacket.Products);
                         return RedirectToAction("PacketOverview");
                     }
+
                 }
                 catch (Exception e)
                 {
@@ -95,7 +98,7 @@ namespace AvansGreen.WebApp.Controllers
                 }
             }
 
-            PrefillSelectOptions();
+            PrefillSelectOptions(vm);
 
             return View(vm);
         }

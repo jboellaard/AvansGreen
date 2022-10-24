@@ -1,7 +1,9 @@
-﻿
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 @{
     string displayName = User.Identity?.Name ?? "Anonymous";
-    //var claim = (ClaimsIdentity)User.Identity;
+    bool authenticated = User.Identity!.IsAuthenticated;
+    var claimValue = User.FindFirst("UserType")?.Value;
 }
 
 <!DOCTYPE html>
@@ -31,7 +33,7 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @{ if (User.Identity.IsAuthenticated) {
+                        @{ if (authenticated) {
                             <li class="dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
                                     Packets
@@ -42,20 +44,20 @@
                                             <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="PacketOverview">All packets</a>
                                         </li>
                                     @{
-                                    if (User.FindFirst("UserType")?.Value is "Student" or "Admin")
+                                    if (claimValue is "Student" or "Admin")
                                     {
-                                                <li>
-                                                    <a a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="Reservations">My reservations</a>
-                                                </li>
+                                        <li>
+                                            <a a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="Reservations">My reservations</a>
+                                        </li>
                                     }
-                                    if (User.FindFirst("UserType")?.Value is "CanteenEmployee" or "Admin")
+                                    if (claimValue is "CanteenEmployee" or "Admin")
                                     {
-                                                <li>
-                                                    <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="MyPackets">My packets</a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="AddPacket">Add new packet</a>
-                                                </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="MyPackets">My packets</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="AddPacket">Add new packet</a>
+                                        </li>
                                     }
                                     }
                                 </ul>
@@ -70,7 +72,7 @@
                         
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        @if (User.Identity.IsAuthenticated) {
+                        @if (authenticated) {
                             <li class="dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
                                     @(displayName)

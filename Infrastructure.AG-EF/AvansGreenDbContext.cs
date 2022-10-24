@@ -66,8 +66,8 @@ namespace Infrastructure.AG_EF
 
             IEnumerable<Packet> packets = new List<Packet>
             {
-                new Packet("Alcoholic beverage and snack", new DateTime(2022, 10, 20, 17, 0, 0), new DateTime(2022, 10, 20, 20, 0, 0), true, 5.0m, MealType.Drink, canteenEmployees.ElementAt(2).Id) { Id = 1, IsAlcoholic = false },
-                new Packet("Lunch with two sandwiches", new DateTime(2022, 10, 21, 13, 0, 0), new DateTime(2022, 10, 21, 17, 0, 0), false, 5.5m, MealType.Bread, canteenEmployees.ElementAt(1).Id) { Id = 2, IsAlcoholic = false }
+                new Packet("Alcoholic beverage and snack", new DateTime(2022, 10, 20, 17, 0, 0), new DateTime(2022, 10, 20, 20, 0, 0), true, 5.0m, MealType.Drink, canteenEmployees.ElementAt(2).Id) { Id = 1 },
+                new Packet("Lunch with two sandwiches", new DateTime(2022, 10, 21, 13, 0, 0), new DateTime(2022, 10, 21, 17, 0, 0), false, 5.5m, MealType.Bread, canteenEmployees.ElementAt(1).Id) { Id = 2 }
             };
 
             IEnumerable<PacketProduct> productsInPacket = new List<PacketProduct>

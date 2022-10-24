@@ -60,5 +60,15 @@ namespace Infrastructure.AG_EF
             }
             await _context.SaveChangesAsync();
         }
+
+        public IEnumerable<Packet> GetPacketsCreatedByEmployeeWithId(int CanteenEmployeeId)
+        {
+            return _context.Packets.Where(p => p.CanteenEmployeeId == CanteenEmployeeId);
+        }
+
+        public IEnumerable<Packet> GetPacketsReserverdByStudentWithId(int StudentId)
+        {
+            return _context.Packets.Where(p => p.StudentId == StudentId);
+        }
     }
 }

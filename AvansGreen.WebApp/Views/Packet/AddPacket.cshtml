@@ -64,9 +64,10 @@
                     </div>
                     <div id="mySelectOptions">
                     @*@foreach (var product in Model.AllProducts)*@
+                    <label asp-for="Products" hidden class="control-label"></label>
                     @for (var i = 0; i < Model.AllProducts.Count; i++)
                     {
-                        <label for="product-@(i)"><input type="checkbox" id="product-@(i)" onchange="checkboxStatusChange()" value="@(i)" />@(Model.AllProducts.ElementAt(i).Name)</label>
+                        <label for="product-@(i)"><input type="checkbox" name="ProductIdList" id="product-@(i)" onchange="checkboxStatusChange()" value="@(Model.AllProducts.ElementAt(i).Id)" />@(Model.AllProducts.ElementAt(i).Name)</label>
                     }
                     </div>
                 </div>

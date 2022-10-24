@@ -6,11 +6,11 @@ namespace AvansGreen.WebApp.Models
     public class LoginViewModel
     {
         [Required]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Required]
         [UIHint("password")]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         public string ReturnUrl { get; set; } = "/";
 

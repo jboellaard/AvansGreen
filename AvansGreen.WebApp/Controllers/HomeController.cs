@@ -1,4 +1,5 @@
 ﻿using AvansGreen.WebApp.Models;
+using Core.Domain;
 using Core.DomainServices.IRepos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,16 +30,19 @@ namespace AvansGreen.WebApp.Controllers
         }
 
         [Authorize]
-        public IActionResult Index()
+        public IActionResult Index(CurrentUserViewModel currentUserVM)
         {
-            //if (currentUserViewModel.TypeOfUser is TypeOfUser.Student or TypeOfUser.Admin)
-            //{
-            //    currentUserViewModel.Student = _studentRepository.GetByEmail(currentUserViewModel.Email);
-            //}
-            //if (currentUserViewModel.TypeOfUser is TypeOfUser.CanteenEmployee or TypeOfUser.Admin)
-            //{
-            //    currentUserViewModel.CanteenEmployee = _canteenEmployeeRepository.GetByEmail(currentUserViewModel.Email);
-            //}
+            if (currentUserVM.TypeOfUser is TypeOfUser.Student or TypeOfUser.Admin)
+            {
+                Student? student = _studentRepository.GetByEmail(currentUserVM.Email);
+                if (student != null) HttpContext.Session.SetInt32("StudentId", student.Id);
+
+            }
+            if (currentUserVM.TypeOfUser is TypeOfUser.CanteenEmployee or TypeOfUser.Admin)
+            {
+                CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmail(currentUserVM.Email);
+                if (canteenEmployee != null) HttpContext.Session.SetInt32("CanteenEmployeeId", canteenEmployee.Id);
+            }
 
             return View();
         }

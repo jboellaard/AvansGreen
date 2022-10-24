@@ -7,8 +7,8 @@ namespace AvansGreen.WebApp.Controllers;
 
 public class AccountController : Controller
 {
-    private UserManager<IdentityUser> _userManager;
-    private SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<IdentityUser> _signInManager;
     private readonly IConfiguration _configuration;
 
     public AccountController(UserManager<IdentityUser> userMgr,
@@ -18,15 +18,6 @@ public class AccountController : Controller
         _signInManager = signInMgr;
         _configuration = configuration;
     }
-
-    //[AllowAnonymous]
-    //public IActionResult Login(string returnUrl)
-    //{
-    //    return View(new LoginModel
-    //    {
-    //        ReturnUrl = returnUrl
-    //    });
-    //}
 
     [AllowAnonymous]
     public IActionResult Login()
@@ -50,12 +41,13 @@ public class AccountController : Controller
                 {
                     var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
                     var claims = claimsPrincipal.Claims.ToList();
-                    //var currentUserVM = new CurrentUserViewModel() { Email = user.Email };
-                    //if (claims.Any(x => x.Value == "Admin")) currentUserVM.TypeOfUser = TypeOfUser.Admin;
-                    //else if (claims.Any(x => x.Value == "CanteenEmployee")) currentUserVM.TypeOfUser = TypeOfUser.CanteenEmployee;
-                    //else if (claims.Any(x => x.Value == "Student")) currentUserVM.TypeOfUser = TypeOfUser.Student;
+                    var currentUserVM = new CurrentUserViewModel() { Email = user.Email };
 
-                    return RedirectToAction("Index", "Home");
+                    if (claims.Any(x => x.Value is "Admin")) currentUserVM.TypeOfUser = TypeOfUser.Admin;
+                    else if (claims.Any(x => x.Value is "CanteenEmployee")) currentUserVM.TypeOfUser = TypeOfUser.CanteenEmployee;
+                    else if (claims.Any(x => x.Value is "Student")) currentUserVM.TypeOfUser = TypeOfUser.Student;
+
+                    return RedirectToAction("Index", "Home", currentUserVM);
                 }
             }
         }
@@ -63,22 +55,28 @@ public class AccountController : Controller
         return View(loginModel);
     }
 
-    public async Task<IActionResult> BrowseAnonymously()
+    public IActionResult BrowseAnonymously()
     {
-        await _signInManager.SignOutAsync();
+        LogoutUser();
         return RedirectToAction("PacketOverview", "Packet");
     }
 
 
-    public async Task<RedirectResult> Logout()
+    public IActionResult Logout()
     {
-        await _signInManager.SignOutAsync();
-        return Redirect("~/Account/Login");
+        LogoutUser();
+        return RedirectToAction("Login");
     }
 
     public IActionResult AccessDenied()
     {
         return View();
+    }
+
+    public async void LogoutUser()
+    {
+        await _signInManager.SignOutAsync();
+        HttpContext.Session.Clear();
     }
 
 }
