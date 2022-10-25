@@ -6,7 +6,7 @@ namespace AvansGreen.WebApp.Models
     public class LoginViewModel
     {
         [Required]
-        public string? Email { get; set; }
+        public string? Nr { get; set; }
 
         [Required]
         [UIHint("password")]

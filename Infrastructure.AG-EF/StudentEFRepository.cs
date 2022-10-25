@@ -24,9 +24,9 @@ namespace Infrastructure.AG_EF
             return _context.Students.Include(s => s.ReservedPackets).SingleOrDefault(student => student.Id == id);
         }
 
-        public Student? GetByEmail(string email)
+        public Student? GetByStudentNr(string studentNr)
         {
-            return _context.Students.Include(s => s.ReservedPackets).SingleOrDefault(student => student.EmailAddress == email);
+            return _context.Students.Include(s => s.ReservedPackets).SingleOrDefault(student => student.StudentNr == studentNr);
         }
 
     }

@@ -6,6 +6,6 @@ namespace Core.DomainServices.IRepos
     {
         IEnumerable<CanteenEmployee> GetCanteenWorkers();
         CanteenEmployee? GetById(int id);
-        CanteenEmployee? GetByEmail(string email);
+        CanteenEmployee? GetByEmployeeNr(string employeeNr);
     }
 }

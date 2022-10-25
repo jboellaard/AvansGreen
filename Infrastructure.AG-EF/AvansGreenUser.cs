@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.AG_EF
 {
     public class AvansGreenUser : IdentityUser
     {
-        public int StudentId { get; set; }
-        public int CanteenEmployeeId { get; set; }
+        [MaxLength(256)]
+        public string FullName { get; set; } = "Avans Green User";
     }
 }

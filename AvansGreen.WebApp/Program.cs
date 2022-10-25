@@ -22,13 +22,13 @@ builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(use
 //        .EnableSensitiveDataLogging(true)
 //);
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<AvansGreenUser, IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    options.User.RequireUniqueEmail = true;
+    //options.User.RequireUniqueEmail = true;
 });
 
 builder.Services.AddAuthorization(options =>
@@ -53,7 +53,7 @@ builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.IdleTimeout = TimeSpan.FromHours(2);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });

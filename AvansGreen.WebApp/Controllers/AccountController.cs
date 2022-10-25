@@ -1,4 +1,5 @@
 ﻿using AvansGreen.WebApp.Models;
+using Infrastructure.AG_EF;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,12 +8,12 @@ namespace AvansGreen.WebApp.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<AvansGreenUser> _userManager;
+    private readonly SignInManager<AvansGreenUser> _signInManager;
     private readonly IConfiguration _configuration;
 
-    public AccountController(UserManager<IdentityUser> userMgr,
-        SignInManager<IdentityUser> signInMgr, IConfiguration configuration)
+    public AccountController(UserManager<AvansGreenUser> userMgr,
+        SignInManager<AvansGreenUser> signInMgr, IConfiguration configuration)
     {
         _userManager = userMgr;
         _signInManager = signInMgr;
@@ -32,7 +33,7 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            var user = await _userManager.FindByEmailAsync(loginModel.Email);
+            var user = await _userManager.FindByNameAsync(loginModel.Nr);
             if (user != null)
             {
                 await _signInManager.SignOutAsync();
@@ -41,7 +42,8 @@ public class AccountController : Controller
                 {
                     var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
                     var claims = claimsPrincipal.Claims.ToList();
-                    var currentUserVM = new CurrentUserViewModel() { Email = user.Email };
+                    var currentUserVM = new CurrentUserViewModel() { Nr = user.UserName };
+                    HttpContext.Session.SetString("UserFullName", user.FullName);
 
                     if (claims.Any(x => x.Value is "Admin")) currentUserVM.TypeOfUser = TypeOfUser.Admin;
                     else if (claims.Any(x => x.Value is "CanteenEmployee")) currentUserVM.TypeOfUser = TypeOfUser.CanteenEmployee;

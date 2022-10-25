@@ -3,16 +3,16 @@
     public class CanteenEmployee
     {
         public int Id { get; set; }
-        public string EmailAddress { get; set; }
+        public string Name { get; set; }
         public string EmployeeNr { get; set; }
         public int CanteenId { get; set; }
         public Canteen? Canteen { get; set; }
         public ICollection<Packet> CreatedPackets { get; set; } = new List<Packet>();
 
-        public CanteenEmployee(string employeeNr, string emailAddress)
+        public CanteenEmployee(string employeeNr, string name)
         {
             EmployeeNr = employeeNr;
-            EmailAddress = emailAddress;
+            Name = name;
         }
     }
 }

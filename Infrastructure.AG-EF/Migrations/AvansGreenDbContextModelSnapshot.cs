@@ -30,10 +30,18 @@ namespace Infrastructure.AG_EF.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("City")
-                        .HasColumnType("int");
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Location")
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasWarmMeals")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -41,31 +49,7 @@ namespace Infrastructure.AG_EF.Migrations
 
                     b.ToTable("Canteens");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            City = 0,
-                            Location = "LA5"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            City = 0,
-                            Location = "H1"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            City = 0,
-                            Location = "LD1"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            City = 1,
-                            Location = "TH1"
-                        });
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Canteen");
                 });
 
             modelBuilder.Entity("Core.Domain.CanteenEmployee", b =>
@@ -79,11 +63,11 @@ namespace Infrastructure.AG_EF.Migrations
                     b.Property<int>("CanteenId")
                         .HasColumnType("int");
 
-                    b.Property<string>("EmailAddress")
+                    b.Property<string>("EmployeeNr")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("EmployeeNr")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -91,7 +75,7 @@ namespace Infrastructure.AG_EF.Migrations
 
                     b.HasIndex("CanteenId");
 
-                    b.HasIndex("EmailAddress")
+                    b.HasIndex("EmployeeNr")
                         .IsUnique();
 
                     b.ToTable("CanteenEmployees");
@@ -101,29 +85,60 @@ namespace Infrastructure.AG_EF.Migrations
                         {
                             Id = 1,
                             CanteenId = 3,
-                            EmailAddress = "adminmail@avans.nl",
-                            EmployeeNr = "0000000"
+                            EmployeeNr = "a0000000",
+                            Name = "Admin"
                         },
                         new
                         {
                             Id = 2,
                             CanteenId = 1,
-                            EmailAddress = "n.devries@avans.nl",
-                            EmployeeNr = "1234567"
+                            EmployeeNr = "e1234567",
+                            Name = "Naomi de Vries"
                         },
                         new
                         {
                             Id = 3,
                             CanteenId = 2,
-                            EmailAddress = "p.smit@avans.nl",
-                            EmployeeNr = "1234567"
+                            EmployeeNr = "e2345678",
+                            Name = "Peter Smit"
                         },
                         new
                         {
                             Id = 4,
                             CanteenId = 4,
-                            EmailAddress = "l.degroot@avans.nl",
-                            EmployeeNr = "1234567"
+                            EmployeeNr = "e3456789",
+                            Name = "Lennart de Groot"
+                        });
+                });
+
+            modelBuilder.Entity("Core.Domain.MealType", b =>
+                {
+                    b.Property<int>("MealTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MealTypeId");
+
+                    b.ToTable("MealTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            MealTypeId = 1,
+                            Name = "Bread"
+                        },
+                        new
+                        {
+                            MealTypeId = 2,
+                            Name = "WarmMeal"
+                        },
+                        new
+                        {
+                            MealTypeId = 3,
+                            Name = "Drink"
                         });
                 });
 
@@ -135,11 +150,17 @@ namespace Infrastructure.AG_EF.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CanteenEmployeeId")
+                    b.Property<int?>("CanteenEmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanteenId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsAlcoholic")
                         .HasColumnType("bit");
+
+                    b.Property<int>("MealTypeId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -161,12 +182,13 @@ namespace Infrastructure.AG_EF.Migrations
                     b.Property<DateTime?>("TimeOfPickUpByStudent")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TypeOfMeal")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CanteenEmployeeId");
+
+                    b.HasIndex("CanteenId");
+
+                    b.HasIndex("MealTypeId");
 
                     b.HasIndex("StudentId");
 
@@ -176,24 +198,24 @@ namespace Infrastructure.AG_EF.Migrations
                         new
                         {
                             Id = 1,
-                            CanteenEmployeeId = 3,
-                            IsAlcoholic = false,
+                            CanteenId = 3,
+                            IsAlcoholic = true,
+                            MealTypeId = 3,
                             Name = "Alcoholic beverage and snack",
                             PickUpTimeEnd = new DateTime(2022, 10, 20, 20, 0, 0, 0, DateTimeKind.Unspecified),
                             PickUpTimeStart = new DateTime(2022, 10, 20, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            Price = 5.0m,
-                            TypeOfMeal = 2
+                            Price = 5.0m
                         },
                         new
                         {
                             Id = 2,
-                            CanteenEmployeeId = 2,
+                            CanteenId = 2,
                             IsAlcoholic = false,
+                            MealTypeId = 1,
                             Name = "Lunch with two sandwiches",
                             PickUpTimeEnd = new DateTime(2022, 10, 21, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             PickUpTimeStart = new DateTime(2022, 10, 21, 13, 0, 0, 0, DateTimeKind.Unspecified),
-                            Price = 5.5m,
-                            TypeOfMeal = 0
+                            Price = 5.5m
                         });
                 });
 
@@ -309,8 +331,9 @@ namespace Infrastructure.AG_EF.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CityOfSchool")
-                        .HasColumnType("int");
+                    b.Property<string>("CityOfSchool")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -319,7 +342,7 @@ namespace Infrastructure.AG_EF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -344,50 +367,126 @@ namespace Infrastructure.AG_EF.Migrations
                         new
                         {
                             Id = 1,
-                            CityOfSchool = 0,
+                            CityOfSchool = "Breda",
                             DateOfBirth = new DateTime(1998, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAddress = "adminmail@avans.nl",
-                            FullName = "Admin",
-                            StudentNr = "0000000"
+                            Name = "Admin",
+                            StudentNr = "a0000000"
                         },
                         new
                         {
                             Id = 2,
-                            CityOfSchool = 0,
+                            CityOfSchool = "Breda",
                             DateOfBirth = new DateTime(1998, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAddress = "je.boellaard@student.avans.nl",
-                            FullName = "Joy Boellaard",
+                            Name = "Joy Boellaard",
                             PhoneNr = "0612345678",
-                            StudentNr = "2182556"
+                            StudentNr = "s2182556"
                         },
                         new
                         {
                             Id = 3,
-                            CityOfSchool = 0,
+                            CityOfSchool = "Breda",
                             DateOfBirth = new DateTime(2000, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAddress = "em.degroot@student.avans.nl",
-                            FullName = "Emma de Groot",
+                            Name = "Emma de Groot",
                             PhoneNr = "0623456789",
-                            StudentNr = "2192233"
+                            StudentNr = "s2192233"
                         },
                         new
                         {
                             Id = 4,
-                            CityOfSchool = 1,
+                            CityOfSchool = "Tilburg",
                             DateOfBirth = new DateTime(2001, 3, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAddress = "b.dejong@student.avans.nl",
-                            FullName = "Ben de Jong",
-                            StudentNr = "2192344"
+                            Name = "Ben de Jong",
+                            StudentNr = "s2192344"
                         },
                         new
                         {
                             Id = 5,
-                            CityOfSchool = 0,
+                            CityOfSchool = "Breda",
                             DateOfBirth = new DateTime(1999, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAddress = "d.li@student.avans.nl",
-                            FullName = "Diana Li",
+                            Name = "Diana Li",
                             PhoneNr = "0645678901",
-                            StudentNr = "2184399"
+                            StudentNr = "s2184399"
+                        });
+                });
+
+            modelBuilder.Entity("Core.Domain.BredaCanteen", b =>
+                {
+                    b.HasBaseType("Core.Domain.Canteen");
+
+                    b.HasDiscriminator().HasValue("BredaCanteen");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            City = "Breda",
+                            HasWarmMeals = true,
+                            Name = "LA5"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            City = "Breda",
+                            HasWarmMeals = true,
+                            Name = "LD1"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            City = "Breda",
+                            HasWarmMeals = true,
+                            Name = "HA1"
+                        });
+                });
+
+            modelBuilder.Entity("Core.Domain.DenBoschCanteen", b =>
+                {
+                    b.HasBaseType("Core.Domain.Canteen");
+
+                    b.HasDiscriminator().HasValue("DenBoschCanteen");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 6,
+                            City = "Den Bosch",
+                            HasWarmMeals = true,
+                            Name = "DH1"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            City = "Den Bosch",
+                            HasWarmMeals = true,
+                            Name = "DH5"
+                        });
+                });
+
+            modelBuilder.Entity("Core.Domain.TilburgCanteen", b =>
+                {
+                    b.HasBaseType("Core.Domain.Canteen");
+
+                    b.HasDiscriminator().HasValue("TilburgCanteen");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 4,
+                            City = "Tilburg",
+                            HasWarmMeals = false,
+                            Name = "TH1"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            City = "Tilburg",
+                            HasWarmMeals = false,
+                            Name = "TH5"
                         });
                 });
 
@@ -404,9 +503,19 @@ namespace Infrastructure.AG_EF.Migrations
 
             modelBuilder.Entity("Core.Domain.Packet", b =>
                 {
-                    b.HasOne("Core.Domain.CanteenEmployee", "CanteenEmployee")
+                    b.HasOne("Core.Domain.CanteenEmployee", null)
                         .WithMany("CreatedPackets")
-                        .HasForeignKey("CanteenEmployeeId")
+                        .HasForeignKey("CanteenEmployeeId");
+
+                    b.HasOne("Core.Domain.Canteen", "Canteen")
+                        .WithMany()
+                        .HasForeignKey("CanteenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Domain.MealType", "MealType")
+                        .WithMany()
+                        .HasForeignKey("MealTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -414,7 +523,9 @@ namespace Infrastructure.AG_EF.Migrations
                         .WithMany("ReservedPackets")
                         .HasForeignKey("StudentId");
 
-                    b.Navigation("CanteenEmployee");
+                    b.Navigation("Canteen");
+
+                    b.Navigation("MealType");
 
                     b.Navigation("Student");
                 });

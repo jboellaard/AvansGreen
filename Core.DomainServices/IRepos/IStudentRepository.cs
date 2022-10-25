@@ -6,6 +6,6 @@ namespace Core.DomainServices.IRepos
     {
         IEnumerable<Student> GetStudents();
         Student? GetById(int id);
-        Student? GetByEmail(string email);
+        Student? GetByStudentNr(string studentNr);
     }
 }

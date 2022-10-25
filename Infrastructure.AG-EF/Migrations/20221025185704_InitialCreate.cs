@@ -15,12 +15,26 @@ namespace Infrastructure.AG_EF.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    City = table.Column<int>(type: "int", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HasWarmMeals = table.Column<bool>(type: "bit", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Canteens", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MealTypes",
+                columns: table => new
+                {
+                    MealTypeId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MealTypes", x => x.MealTypeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -47,8 +61,8 @@ namespace Infrastructure.AG_EF.Migrations
                     EmailAddress = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StudentNr = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CityOfSchool = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CityOfSchool = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNr = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -62,8 +76,8 @@ namespace Infrastructure.AG_EF.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EmailAddress = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EmployeeNr = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmployeeNr = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CanteenId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -89,9 +103,10 @@ namespace Infrastructure.AG_EF.Migrations
                     TimeOfPickUpByStudent = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsAlcoholic = table.Column<bool>(type: "bit", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(6,2)", precision: 6, scale: 2, nullable: false),
-                    TypeOfMeal = table.Column<int>(type: "int", nullable: false),
-                    CanteenEmployeeId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: true)
+                    CanteenId = table.Column<int>(type: "int", nullable: false),
+                    MealTypeId = table.Column<int>(type: "int", nullable: false),
+                    StudentId = table.Column<int>(type: "int", nullable: true),
+                    CanteenEmployeeId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -100,7 +115,18 @@ namespace Infrastructure.AG_EF.Migrations
                         name: "FK_Packets_CanteenEmployees_CanteenEmployeeId",
                         column: x => x.CanteenEmployeeId,
                         principalTable: "CanteenEmployees",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Packets_Canteens_CanteenId",
+                        column: x => x.CanteenId,
+                        principalTable: "Canteens",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Packets_MealTypes_MealTypeId",
+                        column: x => x.MealTypeId,
+                        principalTable: "MealTypes",
+                        principalColumn: "MealTypeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Packets_Students_StudentId",
@@ -137,13 +163,26 @@ namespace Infrastructure.AG_EF.Migrations
 
             migrationBuilder.InsertData(
                 table: "Canteens",
-                columns: new[] { "Id", "City", "Location" },
+                columns: new[] { "Id", "City", "Discriminator", "HasWarmMeals", "Name" },
                 values: new object[,]
                 {
-                    { 1, 0, "LA5" },
-                    { 2, 0, "H1" },
-                    { 3, 0, "LD1" },
-                    { 4, 1, "TH1" }
+                    { 1, "Breda", "BredaCanteen", true, "LA5" },
+                    { 2, "Breda", "BredaCanteen", true, "LD1" },
+                    { 3, "Breda", "BredaCanteen", true, "HA1" },
+                    { 6, "Den Bosch", "DenBoschCanteen", true, "DH1" },
+                    { 7, "Den Bosch", "DenBoschCanteen", true, "DH5" },
+                    { 4, "Tilburg", "TilburgCanteen", false, "TH1" },
+                    { 5, "Tilburg", "TilburgCanteen", false, "TH5" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MealTypes",
+                columns: new[] { "MealTypeId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Bread" },
+                    { 2, "WarmMeal" },
+                    { 3, "Drink" }
                 });
 
             migrationBuilder.InsertData(
@@ -161,36 +200,35 @@ namespace Infrastructure.AG_EF.Migrations
 
             migrationBuilder.InsertData(
                 table: "Students",
-                columns: new[] { "Id", "CityOfSchool", "DateOfBirth", "EmailAddress", "FullName", "PhoneNr", "StudentNr" },
+                columns: new[] { "Id", "CityOfSchool", "DateOfBirth", "EmailAddress", "Name", "PhoneNr", "StudentNr" },
                 values: new object[,]
                 {
-                    { 1, 0, new DateTime(1998, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "adminmail@avans.nl", "Admin", null, "0000000" },
-                    { 2, 0, new DateTime(1998, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "je.boellaard@student.avans.nl", "Joy Boellaard", "0612345678", "2182556" },
-                    { 3, 0, new DateTime(2000, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "em.degroot@student.avans.nl", "Emma de Groot", "0623456789", "2192233" },
-                    { 4, 1, new DateTime(2001, 3, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), "b.dejong@student.avans.nl", "Ben de Jong", null, "2192344" },
-                    { 5, 0, new DateTime(1999, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), "d.li@student.avans.nl", "Diana Li", "0645678901", "2184399" }
+                    { 1, "Breda", new DateTime(1998, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "adminmail@avans.nl", "Admin", null, "a0000000" },
+                    { 2, "Breda", new DateTime(1998, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "je.boellaard@student.avans.nl", "Joy Boellaard", "0612345678", "s2182556" },
+                    { 3, "Breda", new DateTime(2000, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "em.degroot@student.avans.nl", "Emma de Groot", "0623456789", "s2192233" },
+                    { 4, "Tilburg", new DateTime(2001, 3, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), "b.dejong@student.avans.nl", "Ben de Jong", null, "s2192344" },
+                    { 5, "Breda", new DateTime(1999, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), "d.li@student.avans.nl", "Diana Li", "0645678901", "s2184399" }
                 });
 
             migrationBuilder.InsertData(
                 table: "CanteenEmployees",
-                columns: new[] { "Id", "CanteenId", "EmailAddress", "EmployeeNr" },
+                columns: new[] { "Id", "CanteenId", "EmployeeNr", "Name" },
                 values: new object[,]
                 {
-                    { 1, 3, "adminmail@avans.nl", "0000000" },
-                    { 2, 1, "n.devries@avans.nl", "1234567" },
-                    { 3, 2, "p.smit@avans.nl", "1234567" },
-                    { 4, 4, "l.degroot@avans.nl", "1234567" }
+                    { 1, 3, "a0000000", "Admin" },
+                    { 2, 1, "e1234567", "Naomi de Vries" },
+                    { 3, 2, "e2345678", "Peter Smit" },
+                    { 4, 4, "e3456789", "Lennart de Groot" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Packets",
-                columns: new[] { "Id", "CanteenEmployeeId", "IsAlcoholic", "Name", "PickUpTimeEnd", "PickUpTimeStart", "Price", "StudentId", "TimeOfPickUpByStudent", "TypeOfMeal" },
-                values: new object[] { 1, 3, false, "Alcoholic beverage and snack", new DateTime(2022, 10, 20, 20, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 20, 17, 0, 0, 0, DateTimeKind.Unspecified), 5.0m, null, null, 2 });
-
-            migrationBuilder.InsertData(
-                table: "Packets",
-                columns: new[] { "Id", "CanteenEmployeeId", "IsAlcoholic", "Name", "PickUpTimeEnd", "PickUpTimeStart", "Price", "StudentId", "TimeOfPickUpByStudent", "TypeOfMeal" },
-                values: new object[] { 2, 2, false, "Lunch with two sandwiches", new DateTime(2022, 10, 21, 17, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 21, 13, 0, 0, 0, DateTimeKind.Unspecified), 5.5m, null, null, 0 });
+                columns: new[] { "Id", "CanteenEmployeeId", "CanteenId", "IsAlcoholic", "MealTypeId", "Name", "PickUpTimeEnd", "PickUpTimeStart", "Price", "StudentId", "TimeOfPickUpByStudent" },
+                values: new object[,]
+                {
+                    { 1, null, 3, true, 3, "Alcoholic beverage and snack", new DateTime(2022, 10, 20, 20, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 20, 17, 0, 0, 0, DateTimeKind.Unspecified), 5.0m, null, null },
+                    { 2, null, 2, false, 1, "Lunch with two sandwiches", new DateTime(2022, 10, 21, 17, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 21, 13, 0, 0, 0, DateTimeKind.Unspecified), 5.5m, null, null }
+                });
 
             migrationBuilder.InsertData(
                 table: "ProductsInPacket",
@@ -213,15 +251,25 @@ namespace Infrastructure.AG_EF.Migrations
                 column: "CanteenId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CanteenEmployees_EmailAddress",
+                name: "IX_CanteenEmployees_EmployeeNr",
                 table: "CanteenEmployees",
-                column: "EmailAddress",
+                column: "EmployeeNr",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Packets_CanteenEmployeeId",
                 table: "Packets",
                 column: "CanteenEmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Packets_CanteenId",
+                table: "Packets",
+                column: "CanteenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Packets_MealTypeId",
+                table: "Packets",
+                column: "MealTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Packets_StudentId",
@@ -264,6 +312,9 @@ namespace Infrastructure.AG_EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "CanteenEmployees");
+
+            migrationBuilder.DropTable(
+                name: "MealTypes");
 
             migrationBuilder.DropTable(
                 name: "Students");

@@ -10,7 +10,7 @@ namespace Core.DomainServices.IServices
             DateTime pickUpTimeEnd,
             bool isAlcoholic,
             decimal price,
-            MealType typeOfMeal,
+            MealTypeId typeOfMeal,
             CanteenEmployee canteenEmployee);
     }
 }

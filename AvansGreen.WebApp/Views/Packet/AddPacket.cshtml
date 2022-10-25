@@ -10,18 +10,15 @@
     <form class="g-3" asp-action="AddPacket" asp-controller="Packet" method="post">
 
         <div class="form-group pb-3 row">
-            <label class="col-4 align-self-center" asp-for="Name">Packet name:</label>
-            <div class="col-8"><input class="form-control" required placeholder="Use a descriptive name" asp-for="Name" /></div>
+            <label class="col-4 align-self-center" asp-for="PacketName">Packet name:</label>
+            <div class="col-8"><input class="form-control" required placeholder="Use a descriptive name" asp-for="PacketName" /></div>
         </div>
         <div class="form-group pb-3 row">
             <label class="col-12 align-self-center pb-1" asp-for="PickUpTimeStart">Date and time of pick-up:</label>
             <span class="text-danger" id="pickupTimeError"></span>
             <div class="d-flex">
                 <div>
-                    <select class="form-select" title="selectList" asp-for="DateOfPickUp">
-                        <option value="@(today)">Today</option>
-                        <option value="@(today.AddDays(1))">Tomorrow</option>
-                        <option value="@(today.AddDays(2))">Day after tomorrow</option>
+                    <select class="form-select" asp-for="PickUpDaysFromNow" asp-items="@ViewBag.Days">
                     </select>
                 </div>
                 @*<div>*@

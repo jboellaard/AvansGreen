@@ -16,12 +16,12 @@ namespace Infrastructure.AG_EF
 
         public IEnumerable<Packet> GetPackets()
         {
-            return _context.Packets.Include(p => p.Student).Include(p => p.CanteenEmployee).ThenInclude(c => c.Canteen).Include(p => p.Products);
+            return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.Products);
         }
 
         public Packet? GetById(int id)
         {
-            return _context.Packets.Include(p => p.Student).Include(p => p.CanteenEmployee).ThenInclude(c => c.Canteen).Include(p => p.Products).SingleOrDefault(packet => packet.Id == id);
+            return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.Products).SingleOrDefault(packet => packet.Id == id);
         }
 
         //public void PreLoad()
@@ -61,14 +61,32 @@ namespace Infrastructure.AG_EF
             await _context.SaveChangesAsync();
         }
 
-        public IEnumerable<Packet> GetPacketsCreatedByEmployeeWithId(int CanteenEmployeeId)
+        public IEnumerable<Packet> GetPacketsFromCanteen(int canteenId)
         {
-            return _context.Packets.Where(p => p.CanteenEmployeeId == CanteenEmployeeId);
+            return _context.Packets.Include(p => p.Canteen).Where(p => p.CanteenId == canteenId);
         }
 
-        public IEnumerable<Packet> GetPacketsReserverdByStudentWithId(int StudentId)
+        public IEnumerable<Packet> GetPacketsReserverdByStudentWithId(int studentId)
         {
-            return _context.Packets.Where(p => p.StudentId == StudentId);
+            return _context.Packets.Include(p => p.Canteen).Include(p => p.Student).Where(p => p.StudentId == studentId);
+        }
+
+        public IEnumerable<Packet> GetPacketsWithoutReservation()
+        {
+            return _context.Packets.Include(p => p.Student).Where(p => p.Student == null);
+        }
+
+        public Packet? AddReservationToPacket(Packet packet)
+        {
+            var entityToUpdate = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packet.Id);
+            if (entityToUpdate != null && entityToUpdate.Student == null)
+            {
+                entityToUpdate.StudentId = packet.StudentId;
+
+                _context.SaveChanges();
+            }
+
+            return entityToUpdate;
         }
     }
 }

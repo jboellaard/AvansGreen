@@ -34,14 +34,19 @@ namespace AvansGreen.WebApp.Controllers
         {
             if (currentUserVM.TypeOfUser is TypeOfUser.Student or TypeOfUser.Admin)
             {
-                Student? student = _studentRepository.GetByEmail(currentUserVM.Email);
+                Student? student = _studentRepository.GetByStudentNr(currentUserVM.Nr);
                 if (student != null) HttpContext.Session.SetInt32("StudentId", student.Id);
 
             }
             if (currentUserVM.TypeOfUser is TypeOfUser.CanteenEmployee or TypeOfUser.Admin)
             {
-                CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmail(currentUserVM.Email);
-                if (canteenEmployee != null) HttpContext.Session.SetInt32("CanteenEmployeeId", canteenEmployee.Id);
+                CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(currentUserVM.Nr);
+                if (canteenEmployee != null)
+                {
+                    HttpContext.Session.SetInt32("CanteenEmployeeId", canteenEmployee.Id);
+                    HttpContext.Session.SetInt32("CanteenId", canteenEmployee.CanteenId);
+                    HttpContext.Session.SetString("CanteenName", canteenEmployee.Canteen!.Name);
+                }
             }
 
             return View();

@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject UserManager<IdentityUser> UserManager
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
-    string displayName = User.Identity?.Name ?? "Anonymous";
+    string displayName = HttpContextAccessor.HttpContext!.Session.GetString("UserFullName") ?? "Avans Green User";
     bool authenticated = User.Identity!.IsAuthenticated;
     var claimValue = User.FindFirst("UserType")?.Value;
 }
@@ -32,33 +33,31 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        @{ if (authenticated) {
+                        </li> 
+                        @if (authenticated) {
                             <li class="dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
                                     Packets
                                     <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="PacketOverview">All packets</a>
-                                        </li>
-                                    @{
-                                    if (claimValue is "Student" or "Admin")
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="PacketOverview">All packets</a>
+                                    </li>
+                                    @if (claimValue is "Student" or "Admin")
                                     {
                                         <li>
-                                            <a a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="Reservations">My reservations</a>
+                                            <a a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="MyReservations">My reservations</a>
                                         </li>
                                     }
-                                    if (claimValue is "CanteenEmployee" or "Admin")
+                                    @if (claimValue is "CanteenEmployee" or "Admin")
                                     {
                                         <li>
-                                            <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="MyPackets">My packets</a>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="CanteenPackets">@(HttpContextAccessor.HttpContext.Session.GetString("CanteenName")) Packets</a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="AddPacket">Add new packet</a>
                                         </li>
-                                    }
                                     }
                                 </ul>
                             </li>
@@ -67,8 +66,6 @@
                                 <a class="nav-link" asp-area="" asp-controller="Packet" asp-action="PacketOverview">Packet overview</a>
                             </li>
                         }
-                        } 
-                        
                         
                     </ul>
                     <ul class="nav navbar-nav navbar-right">

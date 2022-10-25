@@ -5,52 +5,73 @@ namespace Infrastructure.AG_EF
 {
     public class AuthDbSeed
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AvansGreenUser> _userManager;
 
-        public AuthDbSeed(UserManager<IdentityUser> userManager)
+        public AuthDbSeed(UserManager<AvansGreenUser> userManager)
         {
             _userManager = userManager;
         }
 
         public async Task EnsurePopulated()
         {
+            string password = "Secret123$";
+
+            string adminUniqueNr = "a0000000";
             string adminEmail = "adminmail@avans.nl";
-            string adminPassword = "Secret123$";
+            string adminFullName = "Admin";
 
+            string student1UniqueNr = "s2182556";
             string student1Email = "je.boellaard@student.avans.nl";
-            string student1Password = "Secret123$";
+            string student1FullName = "Joy Boellaard";
 
+            string student2UniqueNr = "s2192233";
             string student2Email = "em.degroot@student.avans.nl";
-            string student2Password = "Secret123$";
+            string student2FullName = "Emma de Groot";
 
+            string student3UniqueNr = "s2192344";
             string student3Email = "b.dejong@student.avans.nl";
-            string student3Password = "Secret123$";
+            string student3FullName = "Ben de Jong";
 
+            string student4UniqueNr = "s2184399";
             string student4Email = "d.li@student.avans.nl";
-            string student4Password = "Secret123$";
+            string student4FullName = "Diana Li";
 
-            string canteenEmployeeEmail = "n.devries@avans.nl";
-            string canteenEmployeePassword = "Secret123$";
+            string canteenEmployee1UniqueNr = "e1234567";
+            string canteenEmployee1FullName = "Naomi de Vries";
 
-            await AddUser(adminEmail, adminPassword, "Admin");
-            await AddUser(student1Email, student1Password, "Student");
-            await AddUser(student2Email, student2Password, "Student");
-            await AddUser(student3Email, student3Password, "Student");
-            await AddUser(student4Email, student4Password, "Student");
-            await AddUser(canteenEmployeeEmail, canteenEmployeePassword, "CanteenEmployee");
+            string canteenEmployee2UniqueNr = "e2345678";
+            string canteenEmployee2FullName = "Peter Smit";
+
+            string canteenEmployee3UniqueNr = "e3456789";
+            string canteenEmployee3FullName = "Lennart de Groot";
+
+            await AddUser(adminUniqueNr, password, adminFullName, "Admin", adminEmail);
+            await AddUser(student1UniqueNr, password, student1FullName, "Admin", student1Email);
+            await AddUser(student2UniqueNr, password, student2FullName, "Admin", student2Email);
+            await AddUser(student3UniqueNr, password, student3FullName, "Admin", student3Email);
+            await AddUser(student4UniqueNr, password, student4FullName, "Admin", student4Email);
+            await AddUser(canteenEmployee1UniqueNr, password, canteenEmployee1FullName, "Admin");
+            await AddUser(canteenEmployee2UniqueNr, password, canteenEmployee2FullName, "Admin");
+            await AddUser(canteenEmployee3UniqueNr, password, canteenEmployee3FullName, "Admin");
+
         }
 
-        public async Task AddUser(string email, string password, string claim)
+        public async Task AddUser(string uniqueId, string password, string fullName, string claim, string? email = null)
         {
             string claimUserType = "UserType";
-            IdentityUser user = await _userManager.FindByEmailAsync(email);
+            AvansGreenUser user = await _userManager.FindByNameAsync(uniqueId);
             if (user == null)
             {
-                user = new IdentityUser(email)
+                user = new AvansGreenUser()
                 {
-                    Email = email,
-                    EmailConfirmed = true
+                    UserName = uniqueId,
+                    FullName = fullName
                 };
+                if (email != null)
+                {
+                    user.Email = email;
+                    user.EmailConfirmed = true;
+                }
                 await _userManager.CreateAsync(user, password);
                 await _userManager.AddClaimAsync(user, new Claim(claimUserType, claim));
             }
