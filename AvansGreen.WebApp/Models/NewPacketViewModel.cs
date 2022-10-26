@@ -17,7 +17,9 @@ namespace AvansGreen.WebApp.Models
         [Required]
         public decimal Price { get; set; } = 5.0m;
         public MealTypeId TypeOfMeal { get; set; }
-        public CanteenEmployee? CanteenEmployee { get; set; }
+        //public int CanteenId { get; set; }
+
+        public ICollection<int> ProductIdList { get; set; } = new List<int>();
         public ICollection<Product> Products { get; set; } = new List<Product>();
 
         public ICollection<Product> AllProducts { get; set; } = new List<Product>();

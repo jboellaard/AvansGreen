@@ -69,7 +69,8 @@ namespace AvansGreen.WebApp.Controllers
                     if (reservedPacket.PickUpTimeStart.Date.Equals(packet.PickUpTimeStart.Date))
                     {
                         _logger.LogInformation("Already has a reservation on this day");
-                        ModelState.AddModelError("", "You cannot make more than one reservation per day.");
+                        ModelState.AddModelError("OneReservationPerDay", "You cannot make more than one reservation per day.");
+                        return View("PacketDetail", _packetRepository.GetById(Id));
                     }
                 }
                 if (ModelState.IsValid)
@@ -81,7 +82,7 @@ namespace AvansGreen.WebApp.Controllers
                 }
             }
             _logger.LogInformation("Something went wrong, returning view again");
-            return RedirectToAction("PacketDetail", _packetRepository.GetById(Id));
+            return View("PacketDetail", _packetRepository.GetById(Id));
         }
 
         [Authorize(Policy = "OnlyCanteenEmployeesAndUp")]
@@ -152,6 +153,89 @@ namespace AvansGreen.WebApp.Controllers
             PrefillSelectOptions(vm);
 
             return View(vm);
+        }
+
+
+        [Authorize(Policy = "OnlyCanteenEmployeesAndUp")]
+        [HttpGet]
+        public IActionResult EditPacket(int Id)
+        {
+            Packet packet = _packetRepository.GetById(Id)!;
+            if (packet.StudentId.HasValue)
+            {
+                ModelState.AddModelError("AlreadyReservedError", "This packet has a reservation and cannot be edited");
+                return View("PacketDetail", _packetRepository.GetById(Id));
+            }
+            var model = new NewPacketViewModel()
+            {
+                PacketName = packet.Name,
+                PickUpDaysFromNow = ((packet.PickUpTimeStart.Date - DateTime.Now.Date).Days).ToString(),
+                PickUpTimeStart = packet.PickUpTimeStart,
+                PickUpTimeEnd = packet.PickUpTimeEnd,
+                IsAlcoholic = packet.IsAlcoholic,
+                Price = packet.Price,
+                TypeOfMeal = packet.MealTypeId,
+
+            };
+            foreach (PacketProduct packetProduct in packet.Products)
+            {
+                model.ProductIdList.Add(packetProduct.ProductId);
+            }
+
+            PrefillSelectOptions(model);
+
+            return View(model);
+        }
+
+        [Authorize(Policy = "OnlyCanteenEmployeesAndUp")]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public IActionResult EditPacket(NewPacketViewModel vm, List<int> ProductIdList, int Id)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    int? canteenId = HttpContext.Session.GetInt32("CanteenId");
+                    _logger.LogInformation("id: " + canteenId);
+                    if (canteenId != null)
+                    {
+                        vm.PickUpTimeStart = vm.PickUpTimeStart.AddDays(int.Parse(vm.PickUpDaysFromNow!));
+                        vm.PickUpTimeEnd = vm.PickUpTimeEnd.AddDays(int.Parse(vm.PickUpDaysFromNow!));
+
+                        Packet newPacket = new(vm.PacketName!, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, (int)canteenId);
+                        newPacket.Id = Id;
+                        foreach (int productId in ProductIdList)
+                        {
+                            newPacket.Products.Add(new PacketProduct(newPacket.Id, productId));
+                        }
+                        Packet? updatedPacket = _packetRepository.UpdatePacket(newPacket);
+                        return RedirectToAction("CanteenPackets");
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("Error updating packet", e.Message);
+                }
+            }
+
+            PrefillSelectOptions(vm);
+
+            return View(vm);
+        }
+
+        [Authorize(Policy = "OnlyCanteenEmployeesAndUp")]
+        public IActionResult DeletePacket(int Id)
+        {
+            Packet packet = _packetRepository.GetById(Id)!;
+            if (packet.StudentId.HasValue)
+            {
+                ModelState.AddModelError("AlreadyReservedError", "This packet has a reservation and cannot be removed");
+                return View("PacketDetail", _packetRepository.GetById(Id));
+            }
+            _logger.LogInformation("After if");
+            return RedirectToAction("CanteenPackets");
         }
     }
 }

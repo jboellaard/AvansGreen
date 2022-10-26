@@ -52,6 +52,36 @@ namespace Infrastructure.AG_EF
             await _context.SaveChangesAsync();
         }
 
+        public Packet? UpdatePacket(Packet packet)
+        {
+            var productToUpdate = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packet.Id);
+            if (productToUpdate != null && productToUpdate.Student == null)
+            {
+                productToUpdate.Name = packet.Name;
+                productToUpdate.PickUpTimeStart = packet.PickUpTimeStart;
+                productToUpdate.PickUpTimeEnd = packet.PickUpTimeEnd;
+                productToUpdate.IsAlcoholic = packet.IsAlcoholic;
+                productToUpdate.Price = packet.Price;
+                productToUpdate.Products = packet.Products;
+                productToUpdate.MealTypeId = packet.MealTypeId;
+
+                _context.SaveChanges();
+            }
+
+            return productToUpdate;
+        }
+
+        public Packet? DeletePacket(int packetId)
+        {
+            var packetToRemove = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packetId);
+            if (packetToRemove != null && packetToRemove.Student == null)
+            {
+                _context.Packets.Remove(packetToRemove);
+                _context.SaveChanges();
+            }
+            return packetToRemove;
+        }
+
         public async Task AddProductsToPacket(IEnumerable<PacketProduct> packetProducts)
         {
             foreach (PacketProduct packetProduct in packetProducts)

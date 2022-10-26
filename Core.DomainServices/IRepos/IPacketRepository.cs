@@ -16,6 +16,8 @@ namespace Core.DomainServices.IRepos
 
         Task AddPacket(Packet packet);
 
+        Packet? UpdatePacket(Packet packet);
+
         Task AddProductsToPacket(IEnumerable<PacketProduct> packetProducts);
 
         Packet? AddReservationToPacket(Packet packet);

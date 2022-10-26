@@ -46,13 +46,13 @@ namespace Infrastructure.AG_EF
             string canteenEmployee3FullName = "Lennart de Groot";
 
             await AddUser(adminUniqueNr, password, adminFullName, "Admin", adminEmail);
-            await AddUser(student1UniqueNr, password, student1FullName, "Admin", student1Email);
-            await AddUser(student2UniqueNr, password, student2FullName, "Admin", student2Email);
-            await AddUser(student3UniqueNr, password, student3FullName, "Admin", student3Email);
-            await AddUser(student4UniqueNr, password, student4FullName, "Admin", student4Email);
-            await AddUser(canteenEmployee1UniqueNr, password, canteenEmployee1FullName, "Admin");
-            await AddUser(canteenEmployee2UniqueNr, password, canteenEmployee2FullName, "Admin");
-            await AddUser(canteenEmployee3UniqueNr, password, canteenEmployee3FullName, "Admin");
+            await AddUser(student1UniqueNr, password, student1FullName, "Student", student1Email);
+            await AddUser(student2UniqueNr, password, student2FullName, "Student", student2Email);
+            await AddUser(student3UniqueNr, password, student3FullName, "Student", student3Email);
+            await AddUser(student4UniqueNr, password, student4FullName, "Student", student4Email);
+            await AddUser(canteenEmployee1UniqueNr, password, canteenEmployee1FullName, "CanteenEmployee");
+            await AddUser(canteenEmployee2UniqueNr, password, canteenEmployee2FullName, "CanteenEmployee");
+            await AddUser(canteenEmployee3UniqueNr, password, canteenEmployee3FullName, "CanteenEmployee");
 
         }
 
