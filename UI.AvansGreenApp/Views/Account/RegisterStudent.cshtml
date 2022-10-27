@@ -1,0 +1,77 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AvansGreen</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AvansGreen.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+    </header>
+    <div>
+        <main role="main" class="p-5">
+            <div class="border justify-content-center mt-3 p-5 register-form" border-radius:5px;">
+            < <a asp-action="Index" asp-controller="Account">Return</a>
+            <div class="text-danger" asp-validation-summary="All"></div>
+
+                <form class="g-3">
+                    
+                    <div class="form-group pb-3 row">
+                        <label for="fullname" class="form-label col-4 align-self-center">Full name</label>
+                        <div class="col-8"><input type="text" class="form-control" id="fullname"></div>
+                    </div>
+                    <div class="form-group pb-3 row">
+                        <label for="birthday" class="form-label col-4 align-self-center">Date of Birth</label>
+                            <div class="col-8">
+                                <input type="date" id="birthday" name="birthday">
+                            </div>
+                    </div>
+                    <div class="form-group pb-3 row">
+                        <label for="inputstudentNr" class="form-label col-4 align-self-center">Student nr</label>
+                                <div class="col-8"><input type="text" class="form-control" id="inputstudentNr"></div>
+                    </div>
+                    <div class="form-group pb-3 row">
+                        <label for="inputEmail4" class="form-label col-4 align-self-center">Email</label>
+                                    <div class="col-8">
+                                        <input type="email" class="form-control" id="inputEmail4">
+                                    </div>
+                    </div>
+                    <div class="form-group pb-3 row">
+                        <label for="inputCity" class="form-label col-4 align-self-center">City of school</label>
+                                        <div class="col-8">
+                                            <select class="form-select" aria-label="City of school" id="inputCity">
+                            <option selected>Breda</option>
+                            <option value="1">Tilburg</option>
+                                            </select>
+                                        </div>
+                    </div>
+                    <div class="form-group pb-3 row">
+                        <label for="phoneNumber" class="form-label col-4 align-self-center ">Phone number</label>
+                                            <div class="col-8">
+                                                <input type="text" class="form-control" id="phoneNumber"></div>
+                    </div>
+                    
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Sign in</button>
+                    </div>
+                </form>
+                </div>
+        </main>
+    </div>
+
+    <footer class="footer text-muted">
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>
