@@ -21,7 +21,7 @@ namespace Infrastructure.AG_EF
 
         public Packet? GetById(int id)
         {
-            return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.Products).SingleOrDefault(packet => packet.Id == id);
+            return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.Products).ThenInclude(pp => pp.Product).ThenInclude(pr => pr.ProductImage).SingleOrDefault(packet => packet.Id == id);
         }
 
         //public void PreLoad()

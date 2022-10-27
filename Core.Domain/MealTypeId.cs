@@ -4,7 +4,8 @@
     {
         Bread = 1,
         WarmMeal = 2,
-        Drink = 3
+        Drink = 3,
+        Snack = 4
     }
 
     public class MealType

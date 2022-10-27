@@ -15,7 +15,7 @@ namespace Core.Domain
             set
             {
                 if (value.Date > DateTime.Now.Date) throw new InvalidOperationException("Date of birth cannot be in the future");
-                else if (value.AddYears(16) > DateTime.Now.Date) throw new InvalidOperationException("Student must be at least 16 years old");
+                else if (value.AddYears(16).Date > DateTime.Now.Date) throw new InvalidOperationException("Student must be at least 16 years old");
                 else _dateOfBirth = value;
             }
         }
@@ -34,6 +34,8 @@ namespace Core.Domain
         [Phone]
         public string? PhoneNr { get; set; }
         public ICollection<Packet> ReservedPackets { get; set; } = new List<Packet>();
+
+        public int NumberOfTimesNotCollected { get; set; }
 
         public Student(string emailAddress, string studentNr, DateTime dateOfBirth, string name, string cityOfSchool)
         {

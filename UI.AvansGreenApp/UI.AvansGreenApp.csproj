@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\productImages\apple.jpg" />
+    <None Include="wwwroot\productImages\bacardi.webp" />
+    <None Include="wwwroot\productImages\baguette.webp" />
+    <None Include="wwwroot\productImages\banana.webp" />
+    <None Include="wwwroot\productImages\beer.jpg" />
+    <None Include="wwwroot\productImages\cheesesouffle.jpg" />
+    <None Include="wwwroot\productImages\croquette.webp" />
+    <None Include="wwwroot\productImages\panini.jpg" />
+    <None Include="wwwroot\productImages\sandwich.jpg" />
+    <None Include="wwwroot\productImages\soup.jpg" />
+    <None Include="wwwroot\productImages\tangerine.jpg" />
+    <None Include="wwwroot\productImages\vodka.webp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Infrastructure.AG-EF\Infrastructure.AG-EF.csproj" />
+	</ItemGroup>
+
+</Project>

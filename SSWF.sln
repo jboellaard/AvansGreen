@@ -3,17 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvansGreen.WebApp", "AvansGreen.WebApp\AvansGreen.WebApp.csproj", "{B801982C-8887-46F3-8665-47AEDDA56BED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI.AvansGreenApp", "UI.AvansGreenApp\UI.AvansGreenApp.csproj", "{B801982C-8887-46F3-8665-47AEDDA56BED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.DomainServices", "Core.DomainServices\Core.DomainServices.csproj", "{844A885D-72A0-41C5-A3EF-48B165FE1EDE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Domain", "Core.Domain\Core.Domain.csproj", "{E9AE6DCB-E6D5-4B73-B957-3F207BDC6F19}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvansGreen.WebAPI", "AvansGreen.WebAPI\AvansGreen.WebAPI.csproj", "{1A7A44D1-0586-4A25-B369-DA473B9813AD}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.AG-EF", "Infrastructure.AG-EF\Infrastructure.AG-EF.csproj", "{FA379FD8-8A30-498E-83BD-17F6812EB15E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Domain.Tests", "Core.Domain.Tests\Core.Domain.Tests.csproj", "{290A997C-6DF5-4D14-9794-4D27ED2A2164}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Domain.Tests", "Core.Domain.Tests\Core.Domain.Tests.csproj", "{290A997C-6DF5-4D14-9794-4D27ED2A2164}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +31,6 @@ Global
 		{E9AE6DCB-E6D5-4B73-B957-3F207BDC6F19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9AE6DCB-E6D5-4B73-B957-3F207BDC6F19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9AE6DCB-E6D5-4B73-B957-3F207BDC6F19}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A7A44D1-0586-4A25-B369-DA473B9813AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A7A44D1-0586-4A25-B369-DA473B9813AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A7A44D1-0586-4A25-B369-DA473B9813AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A7A44D1-0586-4A25-B369-DA473B9813AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FA379FD8-8A30-498E-83BD-17F6812EB15E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FA379FD8-8A30-498E-83BD-17F6812EB15E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA379FD8-8A30-498E-83BD-17F6812EB15E}.Release|Any CPU.ActiveCfg = Release|Any CPU
