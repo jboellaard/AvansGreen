@@ -22,55 +22,30 @@
             <select class="form-select" asp-for="PickUpDaysFromNow" asp-items="@ViewBag.Days">
             </select>
         </div>
-        @*<div>*@
         <label class="align-self-center px-1">from</label>
         <input class="align-self-center" type="time" value="@(Model.PickUpTimeStart.ToString("HH:mm"))" id="pickupTimeStart" asp-for="PickUpTimeStart" name="pickupTimeStart" required>
         <label class="align-self-center px-1">to</label>
         <input class="align-self-center" type="time" value="@(Model.PickUpTimeEnd.ToString("HH:mm"))" id="pickupTimeEnd" asp-for="PickUpTimeEnd" name="pickupTimeEnd" required>
-        @*</div>*@
     </div>
-    @*<input class="form-control" required value="@(now.ToString("MM-dd"))" asp-for="DateOfPickUp" />
-    <label class="visually-hidden" asp-for="PickUpTimeEnd"></label>
-    <div class="col-12 d-flex">
-    <input class="form-control" required value="@(now.ToString("yyyy-MM-ddTHH:mm"))" asp-for="PickUpTimeStart" />
-    <label class="align-self-center px-1"> to </label>
-    <input class="form-control" required max="@(now.AddDays(2))"  value="@(now.AddHours(3).ToString("yyyy-MM-ddTHH:mm"))" asp-for="PickUpTimeEnd" />
-    </div>*@
-    @*<label for="pickup" class="form-label col-4 align-self-center">Date of pick-up</label>
-    <div class="col-8">
-    <input type="date" id="pickup" name="pickup" required>
-    </div>*@
 </div>
-@*<div class="form-group pb-3 row">
-            <span id="pickupTimeError"></span>
-            <label for="pickupTimeStart" class="form-label col-4 align-self-center">Time of pick-up</label>
-            <div class="col-8">
-                <input type="time" id="pickupTimeStart" name="pickupTimeStart" required>
-                to
-                <input type="time" id="pickupTimeEnd" name="pickupTimeEnd" required>
-            </div>
-        </div>*@
 <div class="form-group pb-3 row">
-    <label for="myMultiselect">Select products</label>
-    <span id="selectedOptions"></span>
+    <label for="myMultiselect" id="selectedOptions">Select products</label>
     <div id="myMultiselect" class="multiselect">
         <div id="mySelectLabel" class="selectBox" onclick="toggleCheckboxArea()">
             <select class="form-select">
-                <option>somevalue</option>
+                <option>number of products selected</option>
             </select>
             <div class="overSelect"></div>
         </div>
         <div id="mySelectOptions">
-            @*@foreach (var product in Model.AllProducts)*@
             <label asp-for="Products" hidden class="control-label"></label>
             @for (var i = 0; i < Model.AllProducts.Count; i++)
             {
                 <label for="product-@(i)"><input type="checkbox" @if(Model.ProductIdList.Contains(Model.AllProducts.ElementAt(i).Id)) { <text>checked</text> } name="ProductIdList" id="product-@(i)" 
-                    onchange="checkboxStatusChange()" value="@(Model.AllProducts.ElementAt(i).Id)" />@(Model.AllProducts.ElementAt(i).Name)</label>
+                    onchange="checkboxStatusChange()" value="@(Model.AllProducts.ElementAt(i).Id)" /> @(Model.AllProducts.ElementAt(i).Name)</label>
             }
         </div>
     </div>
-    @*</div>*@
 </div>
 <div class="form-group pb-3 row">
     <label class="col-4 align-self-center" asp-for="TypeOfMeal">Type of meal:</label>

@@ -16,12 +16,12 @@ namespace Infrastructure.AG_EF
 
         public IEnumerable<Packet> GetPackets()
         {
-            return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.Products);
+            return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Products);
         }
 
         public Packet? GetById(int id)
         {
-            return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.Products).ThenInclude(pp => pp.Product).ThenInclude(pr => pr.ProductImage).SingleOrDefault(packet => packet.Id == id);
+            return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Products).ThenInclude(pp => pp.Product).ThenInclude(pr => pr.ProductImage).SingleOrDefault(packet => packet.Id == id);
         }
 
         //public void PreLoad()
@@ -55,20 +55,29 @@ namespace Infrastructure.AG_EF
         public Packet? UpdatePacket(Packet packet)
         {
             var productToUpdate = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packet.Id);
-            if (productToUpdate != null && productToUpdate.Student == null)
+
+            if (productToUpdate != null && (productToUpdate.PickUpTimeEnd < DateTime.Now || (productToUpdate.Student == null && productToUpdate.PickUpTimeEnd >= DateTime.Now)))
             {
+                var packetproducts = _context.ProductsInPacket.Where(p => p.PacketId == packet.Id).ToList();
+                foreach (PacketProduct product in packetproducts)
+                {
+                    _context.ProductsInPacket.Remove(product);
+                }
                 productToUpdate.Name = packet.Name;
                 productToUpdate.PickUpTimeStart = packet.PickUpTimeStart;
                 productToUpdate.PickUpTimeEnd = packet.PickUpTimeEnd;
                 productToUpdate.IsAlcoholic = packet.IsAlcoholic;
                 productToUpdate.Price = packet.Price;
+
                 productToUpdate.Products = packet.Products;
                 productToUpdate.MealTypeId = packet.MealTypeId;
+                productToUpdate.Student = null;
+                productToUpdate.StudentId = null;
 
                 _context.SaveChanges();
             }
 
-            return productToUpdate;
+            return packet;
         }
 
         public Packet? DeletePacket(int packetId)
@@ -86,6 +95,12 @@ namespace Infrastructure.AG_EF
         {
             foreach (PacketProduct packetProduct in packetProducts)
             {
+                Product? product = _context.Products.SingleOrDefault(product => product.Id == packetProduct.ProductId);
+                if (product.IsAlcoholic)
+                {
+                    Packet packet = _context.Packets.SingleOrDefault(packet => packet.Id == packetProduct.PacketId);
+                    packet.IsAlcoholic = true;
+                }
                 _context.ProductsInPacket.Add(packetProduct);
             }
             await _context.SaveChangesAsync();
@@ -93,30 +108,41 @@ namespace Infrastructure.AG_EF
 
         public IEnumerable<Packet> GetPacketsFromCanteen(int canteenId)
         {
-            return _context.Packets.Include(p => p.Canteen).Where(p => p.CanteenId == canteenId);
+            return _context.Packets.Include(p => p.Canteen).Include(p => p.MealType).Where(p => p.CanteenId == canteenId);
         }
 
         public IEnumerable<Packet> GetPacketsReserverdByStudentWithId(int studentId)
         {
-            return _context.Packets.Include(p => p.Canteen).Include(p => p.Student).Where(p => p.StudentId == studentId);
+            return _context.Packets.Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Student).Where(p => p.StudentId == studentId);
         }
 
         public IEnumerable<Packet> GetPacketsWithoutReservation()
         {
-            return _context.Packets.Include(p => p.Student).Where(p => p.Student == null);
+            return _context.Packets.Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Student).Where(p => p.Student == null);
         }
 
         public Packet? AddReservationToPacket(Packet packet)
         {
-            var entityToUpdate = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packet.Id);
-            if (entityToUpdate != null && entityToUpdate.Student == null)
+            var packetToUpdate = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packet.Id);
+            if (packetToUpdate != null && packetToUpdate.Student == null)
             {
-                entityToUpdate.StudentId = packet.StudentId;
+                packetToUpdate.StudentId = packet.StudentId;
 
                 _context.SaveChanges();
+                return packetToUpdate;
             }
 
-            return entityToUpdate;
+            return null;
+        }
+
+        public Packet? DeleteReservation(int packetId)
+        {
+            var packetToDeleteReservation = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packetId);
+            packetToDeleteReservation.Student = null;
+            packetToDeleteReservation.StudentId = null;
+            _context.SaveChanges();
+
+            return packetToDeleteReservation;
         }
     }
 }

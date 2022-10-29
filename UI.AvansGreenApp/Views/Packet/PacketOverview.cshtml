@@ -1,92 +1,105 @@
-﻿@model List<Packet>
+﻿@model FilterPacketsViewModel
 @{
-    
+    bool authenticated = User.Identity!.IsAuthenticated;
+    var claimValue = User.FindFirst("UserType")?.Value;
 }
 
-<nav aria-label="breadcrumb" class="border-bottom">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="#">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Packet overview</li>
-  </ol>
-</nav>
-
-<div class="row mt-3">
-    <div class="col-4 ">
+<div class="row">
+    <div class="border-bottom">
+    <h2 class="pb-2">Available packets</h2>
+    </div>
+    <div class="col-12 col-sm-3 mx-4 mx-sm-auto my-3">
+        <form asp-action="FilterPackets" asp-controller="Packet" method="post">
         <div class="row justify-content-start" id="filter-sort-example-filters" data-mdb-auto-filter="true">
-            <div class="col-md-6" data-mdb-filter="color">
-                <span class="fa-lg">Filter: 1</span>
-
-                <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" name="filterSortRadioOptions" id="filterSortRadio1" value="black">
-                    <label class="form-check-label" for="filterSortRadio1">Item 1</label>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="filterSortRadioOptions" id="filterSortRadio2" value="red">
-                    <label class="form-check-label" for="filterSortRadio2">Item 2</label>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="filterSortRadioOptions" id="filterSortRadio3" value="blue">
-                    <label class="form-check-label" for="filterSortRadio3">Item 3</label>
-                </div>
-
-            </div>
-
-            <div class="col-md-6" data-mdb-filter="sale">
-                <span class="fa-lg mb-5">Filter: 2</span>
-
-                <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" name="filterSortRadioOptions2" id="filterSortRadio5" value="yes">
-                    <label class="form-check-label" for="filterSortRadio5">Item 1</label>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="filterSortRadioOptions2" id="filterSortRadio6" value="no">
-                    <label class="form-check-label" for="filterSortRadio6">Item 2</label>
-                </div>
-                
-            </div>
-
-            <div class="col-12">
-            <button type="button" class="btn btn-primary mt-3" id="filterSortReset">
-                Clear all filters
-            </button>
-            </div>
+            <h4>Filter packets</h4>
+            <label asp-for="CityList" class="control-label">Locations:</label>
+            @for (var i = 0; i < Model.CityOptions.Count; i++)
+            {
+                <label for="product-@(i)">
+                    <input type="checkbox" @if(Model.CityList.Contains(Model.CityOptions.ElementAt(i))) { <text>checked</text> } 
+                    name="CityList" id="product-@(i)" value="@(Model.CityOptions.ElementAt(i))" /> @(Model.CityOptions.ElementAt(i))
+                </label>
+            }
 
             <div class="col-12 my-3">
                 <div class="row">
-                    <div class="col-auto container-p">Sort by</div>
                     <div class="col">
-                        <select class="form-select" aria-label="Sort by">
-                            <option selected>Date descending</option>
-                            <option value="1">Date ascending</option>
-                        </select>
+                        <label asp-for="TypeOfMeal">Type of meal:</label>
+                        <select class="form-select" title="selectList" asp-for="TypeOfMeal" asp-items="@ViewBag.MealTypes"></select>
                     </div>
                 </div>
-
             </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a asp-action="UndoFilters" asp-controller="Packet" class="btn btn-outline-primary">Undo filters</a>
+            </div>
+
         </div>
+        </form>
     </div>
     
-    <div class="col-8 border-start">
-        <h2 class="pb-2">Available packets</h2>
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-            @foreach(Packet packet in Model) {
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">@(packet.Name)</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">@(packet.Price)</h6>
-                            <p class="card-text">Some information about the packet.</p>
-                            <a class="btn btn-primary col-12" asp-action="PacketDetail" asp-controller="Packet" asp-route-Id="@(packet.Id)">Read more</a>
+    <div class="col-12 col-sm-9 mt-3 border-start">
+        <div class="container">
+        
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4">
+                @foreach (Packet packet in Model.Packets)
+                {
+                    if (!packet.StudentId.HasValue || (claimValue is "CanteenEmployee" or "Admin"))
+                    {
+                        <div class="col-12">
+                            <div class="card h-100" style=@(packet.PickUpTimeEnd < DateTime.Now ? "background-color:lightgrey" : packet.StudentId.HasValue? "background-color:lightyellow" : "")>
+                                <div class="card-body">
+                                    <div class="d-flex h-100 justify-content-between " style="color:black;">
+                                        <div>@(packet.PickUpTimeStart.ToString("M"))</div>
+                                        <div class="justify-content-end">
+                                            @(packet.PickUpTimeStart.ToString("HH:mm")) to @(packet.PickUpTimeEnd.ToString("HH:mm"))
+                                        </div>
+                                    </div>
+                                    <div class=" flex">
+                                        <hr class="mt-1 mb-2 hr-text">
+                                        <div class="" style="min-height:80px">
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="card-title">@(packet.Name)</h5>
+                                                @if(packet.IsAlcoholic) {
+                                                    <p class="text-danger ms-1"><b>18+</b></p>
+                                                }
+                                            </div>
+                                            <h6 class="card-subtitle mb-2 text-muted">@(packet.MealType.ToString())</h6>
+                                        </div>
+                                        <div style="color:#333;">
+                                            <p class="mb-1">Price: &euro;@(packet.Price)</p>
+                                            <p class="mb-1">Location: @(packet.Canteen.Name) in @(packet.Canteen.City)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-text d-flex justify-content-between  ">
+                                        @*<div>*@
+                                        <a class="align-self-center" asp-action="PacketDetail" asp-controller="Packet" asp-route-Id="@(packet.Id)">Read more</a>
+                                        @*</div>*@
+                                        <div class="justify-content-end">
+                                            @if (authenticated)
+                                            {
+                                                @if (claimValue is "Student" or "Admin" && !packet.StudentId.HasValue && packet.PickUpTimeEnd >= DateTime.Now)
+                                                {
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reserveModal@(packet.Id)">
+                                                        Reserve
+                                                    </button>
+                                                    <partial name="_ReservePacketModal" model="@(packet.Id)" />
+                                                }
+                                                if (claimValue is "CanteenWorker" or "Admin" && packet.StudentId.HasValue)
+                                                {
+                                                    <i class="align-self-center">Reserved</i>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        @*<div class="card-footer">
-                    <button class="btn btn-primary col-12" type="submit">Read more</button>
-                    </div>*@
-                    </div>
-                </div>
-            }
+                    }
+                }
+            </div>
         </div>
     </div>
 
