@@ -18,9 +18,13 @@ namespace Core.DomainServices.IRepos
 
         Packet? UpdatePacket(Packet packet);
 
+        Packet? DeletePacket(int packetId);
+
         Task AddProductsToPacket(IEnumerable<PacketProduct> packetProducts);
 
         Packet? AddReservationToPacket(Packet packet);
+
+        Packet? DeleteReservation(int packetId);
 
     }
 }

@@ -13,6 +13,11 @@
         public MealTypeId MealTypeId { get; set; }
         public string Name { get; set; } = null!;
 
+        public override string ToString()
+        {
+            return System.Text.RegularExpressions.Regex.Replace(MealTypeId.ToString(), "([A-Z])", " $1").Trim();
+        }
+
     }
 
 }

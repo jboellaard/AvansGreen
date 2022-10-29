@@ -1,11 +1,11 @@
-﻿using UI.AvansGreenApp.Models;
-using UI.AvansGreenApp.Security;
-using Core.Domain;
+﻿using Core.Domain;
 using Core.DomainServices.IRepos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using UI.AvansGreenApp.Models;
+using UI.AvansGreenApp.Security;
 
 namespace UI.AvansGreenApp.Controllers
 {
@@ -36,25 +36,14 @@ namespace UI.AvansGreenApp.Controllers
         [Authorize]
         public IActionResult Index(CurrentUserViewModel currentUserVM)
         {
-            //var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            //if (currentUserVM.TypeOfUser is TypeOfUser.Student or TypeOfUser.Admin)
-            //{
-            //    Student? student = _studentRepository.GetByStudentNr(currentUserVM.Nr);
-            //    if (student != null) user.StudentId = student.Id;
-
-            //}
-            if (currentUserVM.TypeOfUser is TypeOfUser.CanteenEmployee or TypeOfUser.Admin)
+            if (currentUserVM.TypeOfUser is TypeOfUser.Employee or TypeOfUser.Admin)
             {
                 CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(currentUserVM.Nr);
                 if (canteenEmployee != null)
                 {
                     HttpContext.Session.SetString("CanteenName", canteenEmployee.Canteen.Name);
-                    //user.CanteenId = canteenEmployee.CanteenId;
-                    //user.CanteenName = canteenEmployee.Canteen.Name;
-
                 }
             }
-
             return View();
         }
 

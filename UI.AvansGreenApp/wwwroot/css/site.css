@@ -14,18 +14,52 @@
 }
 
 html {
-  font-size: 14px;
+  font-size: 11px;
+}
+
+@media (min-width: 400px) {
+    .carousel .card {
+        max-width: 50%;
+    }
 }
 
 @media (min-width: 768px) {
   html {
-    font-size: 16px;
+    font-size: 13px;
   }
+  .navbar {
+      font-size: 14px;
+  }
+    .page-card {
+        max-width: 70vw;
+    }
+
+    .nav-elements-container {
+        max-width: 70vw;
+    }
+    .carousel .card {
+        max-width: 33%;
+    }
+
+    
+    
 }
 
+@media (min-width: 992px) {
+    main {
+        max-width: 70vw;
+    }
+    .page-card {
+        max-width: 50vw;
+    }
+    
+}
+    
+    
+    
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
@@ -85,6 +119,19 @@ h2 {
     border-color: var(--primary-color-dark);
 }
 
+.btn.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    /*    background-color: var(--primary-color-dark);
+    border-color: var(--primary-color-dark);*/
+}
+
+.btn.btn-outline-primary:hover {
+    color:white;
+    border-color: var(--primary-color-dark);
+    background-color: var(--primary-color);
+}
+
  a,  .nav-link {
     color:var(--primary-color);
 }
@@ -103,37 +150,49 @@ h2 {
 }
 
 .nav-elements-container {
-    max-width: 70vw;
+
     margin: 0px auto;
 }
 
 main {
-    max-width: 70vw;
     margin: auto;
 }
 
 .card {
     display: inline-block;
+    width: 100%;
+    height: 100%;
+/*    color: black;*/
 }
 
-.navbar, .dropdown-menu {
+
+.navbar.navbar-dark, .dropdown-menu {
     background-color: var(--primary-color-dark);
     color: white;
 }
 
-.navbar .nav-link, .navbar a, .navbar.navbar-nav {
+.navbar.navbar-dark .nav-link, .navbar a, .navbar.navbar-nav {
     color: var(--bg-color-complementary);
 }
+
+/*.navbar-brand {
+    height:50px;
+}*/
+/*
+.navbar-brand img{
+    max-height:100%;
+}*/
+
+
 /*
 .card {
     background-color: var(--bg-color-complementary);
 }*/
 
-.register-form {
-    max-width: 50vw;
+.page-card {
     margin: auto;
     background-color: white;
-    border-radius:10px;
+    border-radius: 10px;
 }
 
 .multiselect {
@@ -193,4 +252,45 @@ input[type=time] {
     max-height: 100px;
 /*    padding: auto;*/
     overflow: hidden;
+}
+
+
+
+.carousel .cards-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.carousel .card img {
+    object-fit: cover;
+    border-radius: 15px;
+    max-height: 11em;
+}
+
+.carousel .card {
+    margin: 0 0.5em;
+/*    box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.10);*/
+    border-color: lightgrey;
+    border-radius: 15px;
+    
+}
+
+.carousel .carousel-inner {
+    padding: 1em;
+}
+
+.carousel .carousel-control-prev,
+.carousel .carousel-control-next {
+    background-color: #e1e1e1;
+    width: 3vh;
+    height: 3vh;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@media (min-width: 768px) {
+    .carousel .card img {
+        height: 8em;
+    }
 }

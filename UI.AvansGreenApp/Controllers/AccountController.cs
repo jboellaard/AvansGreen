@@ -46,7 +46,7 @@ public class AccountController : Controller
                     HttpContext.Session.SetString("UserFullName", user.FullName);
 
                     if (claims.Any(x => x.Value is "Admin")) currentUserVM.TypeOfUser = TypeOfUser.Admin;
-                    else if (claims.Any(x => x.Value is "CanteenEmployee")) currentUserVM.TypeOfUser = TypeOfUser.CanteenEmployee;
+                    else if (claims.Any(x => x.Value is "CanteenEmployee")) currentUserVM.TypeOfUser = TypeOfUser.Employee;
                     else if (claims.Any(x => x.Value is "Student")) currentUserVM.TypeOfUser = TypeOfUser.Student;
 
                     return RedirectToAction("Index", "Home", currentUserVM);

@@ -1,76 +1,117 @@
-﻿@model Packet
+﻿@model PacketDetailViewModel
 @{
     bool authenticated = User.Identity!.IsAuthenticated;
     var claimValue = User.FindFirst("UserType")?.Value;
+    Packet packet = Model.Packet;
 }
-<div class="text-danger" asp-validation-summary="All"></div>
-<div class="d-flex justify-content-between">
-    <div>
-        <h2>@(Model.Name)</h2>
-        <p>@(Model.PickUpTimeStart)</p>
-    </div>
-    <div class="justify-content-end">
-        @{
-            if (authenticated)
+
+<div class="border justify-content-center mt-0 p-5 py-4 page-card">
+    <div class="text-danger" asp-validation-summary="All"></div>
+    <div class="d-flex justify-content-between">
+        <div class="justify-content-start">
+            <h2>@(packet.Name)</h2>            
+        </div>
+        <div class="flex-shrink-0 justify-content-end">
+            @if (packet.StudentId.HasValue)
             {
-                if (claimValue is "Student" or "Admin" && !Model.StudentId.HasValue)
+                <i class="align-self-center ms-2">Reserved</i>
+            }
+            @if (authenticated){
+                @if (Model.CanEdit)
+                {                     
+                        @if (!packet.StudentId.HasValue && packet.PickUpTimeEnd >= DateTime.Now)
+                        {
+                            <a class="btn btn-primary ms-2" asp-action="EditPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)">Edit <span class="glyphicon glyphicon-pencil"></span></a>
+                        }
+                        else if (packet.PickUpTimeEnd < DateTime.Now)
+                        {
+                            <a class="btn btn-primary ms-2" asp-action="RenewPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)">Renew <span class="glyphicon glyphicon-refresh"></a>
+                        }
+                        @if (!packet.StudentId.HasValue)
+                        {
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal@(packet.Id)">
+                                Delete <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                            <partial name="_DeletePacketModal" model="packet.Id" />
+                        }
+                    }
+            }
+            @if (authenticated)
+            {
+                if (claimValue is "Student" or "Admin" && !packet.StudentId.HasValue && packet.PickUpTimeEnd >= DateTime.Now)
                 {
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reserveModal">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reserveModal@(packet.Id)">
                         Reserve
                     </button>
-                    <div class="modal fade" id="reserveModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Confirm reservation</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to reserve this packet?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <a class="btn btn-primary" asp-action="AddReservation" asp-controller="Packet" asp-route-Id="@(Model.Id)">Reserve</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-                if (claimValue is "CanteenEmployee" or "Admin" && Model.CanteenId == HttpContextAccessor.HttpContext!.Session.GetInt32("CanteenId"))
-                {
-                    <a class="btn btn-primary" asp-action="EditPacket" asp-controller="Packet" asp-route-Id="@(Model.Id)"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-                    //<a class="btn btn-primary" asp-action="DeletePacket" asp-controller="Packet" asp-route-Id="@(Model.Id)">Delete</a>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                        Delete
-                    </button>
-
-                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Confirm delete</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to delete this packet?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <a class="btn btn-primary" asp-action="DeletePacket" asp-controller="Packet" asp-route-Id="@(Model.Id)">Delete</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
+                    <partial name="_ReservePacketModal" model="@(packet.Id)" />
                 }
             }
-            else
-            {
-            }
-        }
+            
+        </div>
     </div>
+    @if (packet.IsAlcoholic) { <h6 class="text-danger">18+</h6> } <h6>Type of meal: @(packet.MealType.ToString())</h6>
+    <p class="mb-1">Price: &euro;@(packet.Price)</p>
+        <div class="row">
+            <div class="col">
+                <p style="color:#333;">This packet can be picked up on @(packet.PickUpTimeStart.Date.ToString("M")) from @(packet.PickUpTimeStart.ToString("HH:mm")) to @(packet.PickUpTimeEnd.ToString("HH:mm")) at @(packet.Canteen.Name) in @(packet.Canteen.City).</p>
+            </div>
+        
 
-    @foreach(PacketProduct product in Model.Products){
-        <div class="crop-product"><img src="@(product.Product.ProductImage.GetSrc("webp"))" /></div>
-    }
+        @if(packet.Products.Count > 0){
+            <p>The packet will contain products similar to the ones shown here. This means that the contents of the actual packet may be a bit different.</p>
+
+
+            <div id="productCarousel" style="max-width:80%; margin:auto;" class="carousel slide" data-interval="false">
+                <div class="carousel-inner">
+                    @for (int i = 0; i < packet.Products.Count; i += 3)
+                    {
+                        <div class="carousel-item @((i==0) ? "active" : "")">
+                            <div class="cards-wrapper">
+                                <div class="card">
+                                    @{
+                                        Product product = packet.Products.ElementAt(i).Product;
+                                    }
+                                    <img src="@(product.ProductImage.GetSrc("webp"))" class="card-img-top" alt="Image of @(product.Name)">
+                                    <div class="card-body border-top d-flex justify-content-between">
+                                        <h5 class="card-title">@(product.Name)</h5>
+                                        @if (product.IsAlcoholic)
+                                        {
+                                            <div class="justify-content-end"><p class="text-danger"><b>18+</b></p></div>
+                                        }
+                                    </div>
+                                </div>
+                                @{
+                                    int numberOfIterations = (packet.Products.Count - i) > 2 ? 2 : packet.Products.Count % 3 - 1;
+                                    for (int j = 1; j <= numberOfIterations; j++)
+                                    {
+                                                <div class="card d-none d-md-block">
+                                                    @{
+                                                Product nextProduct = packet.Products.ElementAt(i + j).Product;
+                                                    }
+                                                    <img src="@(nextProduct.ProductImage.GetSrc("webp"))" class="card-img-top" alt="Image of @(nextProduct.Name)">
+                                                    <div class="card-body border-top d-flex justify-content-between">
+                                                        <h5 class="card-title">@(nextProduct.Name)</h5>
+                                                        @if (nextProduct.IsAlcoholic)
+                                                {
+                                                            <div class="justify-content-end"><p class="text-danger"><b>18+</b></p></div>
+                                                }
+                                                    </div>
+                                                </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        } 
+    </div>
 </div>

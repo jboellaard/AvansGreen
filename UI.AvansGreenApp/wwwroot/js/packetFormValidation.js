@@ -7,22 +7,16 @@ function initMultiselect() {
 
     document.addEventListener("click", function (evt) {
         var flyoutElement = document.getElementById('myMultiselect'),
-            targetElement = evt.target; // clicked element
+            targetElement = evt.target; 
 
         do {
             if (targetElement == flyoutElement) {
-                // This is a click inside. Do nothing, just return.
-                //console.log('click inside');
                 return;
             }
-
-            // Go up the DOM
             targetElement = targetElement.parentNode;
         } while (targetElement);
 
-        // This is a click outside.
         toggleCheckboxArea(true);
-        //console.log('click outside');
     });
 }
 
@@ -37,18 +31,16 @@ function checkboxStatusChange() {
     var checkedCheckboxes = checkboxes.querySelectorAll('input[type=checkbox]:checked');
 
     for (const item of checkedCheckboxes) {
-        //var checkboxValue = item.getAttribute('value');
-        //values.push(checkboxValue);
         var label = document.querySelector("label[for='" + item.getAttribute('id') + "']").textContent;
         labeltexts.push(label);
     }
 
     var dropdownValue = "Nothing is selected";
-    var labels = "";
+    var labels = "Selected products: ";
     if (labeltexts.length > 0) {
         if (labeltexts.length > 1) dropdownValue = labeltexts.length + " products";
         else dropdownValue = "1 product";
-        labels = labeltexts.join(', ');
+        labels += labeltexts.join(', ');
     }
 
     multiselectOption.innerText = dropdownValue;
@@ -101,5 +93,18 @@ $("input[type=time]").on("change", function () {
     if (!((timeval.getUTCHours() < 20 && timeval.getUTCHours() >= 8) || (timeval.getUTCHours() == 20 && timeval.getUTCMinutes() == 0))) {
         console.log("hello");
         timeError.innerHTML = "<p>Please enter a time after 08:00 and before 20:00.</p>";
+    }
+});
+
+$("button[type=submit]").on("click", function (e) {
+    $('.checkmodal').modal("hide");
+});
+
+$("#modalid").on("click", function (e) {
+    var modalELement = $(".checkmodal");
+    if (!timeError.innerHTML.length == 0) {
+        e.preventDefault();
+    } else {
+        modalELement.modal("toggle");
     }
 });

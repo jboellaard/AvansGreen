@@ -1,17 +1,25 @@
 ﻿@model NewPacketViewModel
 @{
-    
+    Canteen canteen = CanteenEnumerable.FromId<Canteen>(Model.CanteenId);
 }
-<div class="border justify-content-center mt-3 p-5 register-form" border-radius:5px;">
-    @*<a asp-action="Index" asp-controller="Account">Return</a>*@
+<div class="border justify-content-center mt-0 p-5 page-card" border-radius:5px;">
+    <h3>Create packet</h3>
+    <p class="border-bottom pb-3">Create a packet for a student to be able to pickup. Make sure to choose the right date and time and a price according to the contents. 
+        The packet will be offered at canteen @(canteen.Name) in @(canteen.City).</p>
+
     <div class="text-danger" asp-validation-summary="All"></div>
 
-    <form class="g-3" asp-action="AddPacket" asp-controller="Packet" method="post">
+    <form class="g-3" id="packetform" asp-action="AddPacket" asp-controller="Packet" method="post">
         <partial name="_PacketForm" model="Model" />
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModel">
-            Create packet
-        </button>
-        <div class="modal fade" id="createModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-primary" id="modalid">
+                Create packet
+            </button>
+            <a type="button" class="btn btn-secondary justify-content-end" asp-action="CanteenPackets" asp-controller="Packet">
+                Cancel
+            </a>
+        </div>
+        <div class="modal checkmodal fade" id="createModel" tabindex="-1" aria-labelledby="exampleModalLabel">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
