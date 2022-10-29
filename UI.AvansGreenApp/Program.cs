@@ -1,8 +1,8 @@
-using UI.AvansGreenApp.Security;
 using Core.DomainServices.IRepos;
 using Infrastructure.AG_EF;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using UI.AvansGreenApp.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +39,6 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddScoped<AuthDbSeed>();
 builder.Services.AddScoped<ICanteenEmployeeRepository, CanteenEmployeeEFRepository>();
-builder.Services.AddScoped<ICanteenRepository, CanteenEFRepository>();
 builder.Services.AddScoped<IPacketRepository, PacketEFRepository>();
 builder.Services.AddScoped<IProductRepository, ProductEFRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentEFRepository>();

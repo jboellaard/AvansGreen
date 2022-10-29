@@ -1,9 +1,5 @@
 ﻿@model FilterPacketsViewModel
 @{
-    List<Canteen> bredaCanteens = Canteen.GetAll<Canteen>().Where(c => c.City == "Breda").ToList();
-    List<Canteen> tilburgCanteens = Canteen.GetAll<Canteen>().Where(c => c.City == "Tilburg").ToList();
-    List<Canteen> denBoschCanteens = Canteen.GetAll<Canteen>().Where(c => c.City == "Den Bosch").ToList();
-
     bool authenticated = User.Identity!.IsAuthenticated;
     var claimValue = User.FindFirst("UserType")?.Value;
 }
@@ -13,39 +9,17 @@
     <h2 class="pb-2">Available packets</h2>
     </div>
     <div class="col-12 col-sm-3 mx-4 mx-sm-auto my-3">
-        <form asp-action="FilterPackets" asp-controller="Packet" method="post"></form>
+        <form asp-action="FilterPackets" asp-controller="Packet" method="post">
         <div class="row justify-content-start" id="filter-sort-example-filters" data-mdb-auto-filter="true">
-            <h4>Filter locations</h4>
-            <label asp-for="CanteenIdList" hidden class="control-label"></label>
-            <div class="col-12 mb-3" data-mdb-filter="color">
-                <span class="fa-lg">Canteens in Breda</span>
-                @foreach(Canteen canteen in bredaCanteens) {
-                    <div class="form-check mt-1 ms-2">
-                        <input class="form-check-input" type="checkbox" id="@(canteen.Name)" name="CanteenIdList" value="@(canteen.Id)">
-                        <label class="form-check-label" for="@(canteen.Name)">@(canteen.Name)</label>
-                    </div>
-                }
-            </div>
-
-            <div class="col-12 mb-3" data-mdb-filter="sale">
-                <span class="fa-lg mt-4">Canteens in Tilburg</span>
-                @foreach(Canteen canteen in tilburgCanteens) {
-                    <div class="form-check mt-1 ms-2">
-                        <input class="form-check-input" type="checkbox" id="@(canteen.Name)" name="CanteenIdList" value="@(canteen.Id)">
-                        <label class="form-check-label" for="@(canteen.Name)">@(canteen.Name)</label>
-                    </div>
-                }
-            </div>
-
-            <div class="col-12 mb-3" data-mdb-filter="sale">
-                <span class="fa-lg mt-4">Canteens in Den Bosch</span>
-                @foreach(Canteen canteen in denBoschCanteens) {
-                    <div class="form-check mt-1 ms-2">
-                        <input class="form-check-input" type="checkbox" id="@(canteen.Name)" name="CanteenIdList" value="@(canteen.Id)">
-                        <label class="form-check-label" for="@(canteen.Name)">@(canteen.Name)</label>
-                    </div>
-                }
-            </div>
+            <h4>Filter packets</h4>
+            <label asp-for="CityList" class="control-label">Locations:</label>
+            @for (var i = 0; i < Model.CityOptions.Count; i++)
+            {
+                <label for="product-@(i)">
+                    <input type="checkbox" @if(Model.CityList.Contains(Model.CityOptions.ElementAt(i))) { <text>checked</text> } 
+                    name="CityList" id="product-@(i)" value="@(Model.CityOptions.ElementAt(i))" /> @(Model.CityOptions.ElementAt(i))
+                </label>
+            }
 
             <div class="col-12 my-3">
                 <div class="row">
@@ -58,10 +32,11 @@
 
             <div class="col-12">
                 <button type="submit" class="btn btn-primary">Filter</button>
-                <a type="button" asp-action="PacketOverview" class="btn btn-outline-primary mt-3">Undo filters</a>
+                <a asp-action="UndoFilters" asp-controller="Packet" class="btn btn-outline-primary">Undo filters</a>
             </div>
 
         </div>
+        </form>
     </div>
     
     <div class="col-12 col-sm-9 mt-3 border-start">

@@ -44,7 +44,7 @@
                                     <div class="align-self-center">
                                     <a asp-action="PacketDetail" asp-controller="Packet" asp-route-Id="@(packet.Id)">Read more</a>
                                     </div>
-                                    <div class="justify-content-end">
+                                    <div class="justify-content-end flex-shrink-0">
                                         @if (!packet.StudentId.HasValue && packet.PickUpTimeEnd >= DateTime.Now)
                                         {
                                             <a class="btn btn-primary" asp-action="EditPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)"><span class="glyphicon glyphicon-pencil"></span></a>

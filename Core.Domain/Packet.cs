@@ -25,7 +25,6 @@
             IsAlcoholic = isAlcoholic;
             Price = price;
             MealTypeId = mealTypeId;
-            //MealType = new MealType() { MealTypeId = MealTypeId, Name = MealTypeId.ToString() };
             CanteenId = canteenId;
         }
 
