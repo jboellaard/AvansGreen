@@ -44,16 +44,10 @@ namespace UI.AvansGreenApp.Controllers
                     HttpContext.Session.SetString("CanteenName", canteenEmployee.Canteen.Name);
                 }
             }
-            return View();
+            return RedirectToAction("PacketOverview", "Packet");
         }
 
         public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [Authorize]
-        public IActionResult Profile()
         {
             return View();
         }
