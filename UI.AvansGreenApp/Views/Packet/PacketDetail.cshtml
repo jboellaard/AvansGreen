@@ -3,6 +3,7 @@
     bool authenticated = User.Identity!.IsAuthenticated;
     var claimValue = User.FindFirst("UserType")?.Value;
     Packet packet = Model.Packet;
+    ViewData["Title"] = packet.Name;
 }
 
 <div class="border justify-content-center mt-0 p-5 py-4 page-card">

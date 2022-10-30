@@ -1,5 +1,6 @@
 ﻿@model FilterPacketsViewModel
 @{
+    ViewData["Title"] = "Packet overview";
     bool authenticated = User.Identity!.IsAuthenticated;
     var claimValue = User.FindFirst("UserType")?.Value;
 }

@@ -1,5 +1,6 @@
 ﻿@model List<Packet>
 @{
+    ViewData["Title"] = "My reservations";
     bool authenticated = User.Identity!.IsAuthenticated;
     var claimValue = User.FindFirst("UserType")?.Value;
 }
