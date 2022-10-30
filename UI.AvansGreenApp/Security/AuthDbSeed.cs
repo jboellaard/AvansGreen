@@ -56,7 +56,7 @@ namespace UI.AvansGreenApp.Security
 
         }
 
-        public async Task AddUser(string uniqueId, string password, string fullName, string claim, string? email = null)
+        public async Task AddUser(string uniqueId, string password, string fullName, string claim, string email = null)
         {
             string claimUserType = "UserType";
             AvansGreenUser user = await _userManager.FindByNameAsync(uniqueId);

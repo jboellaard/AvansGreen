@@ -58,7 +58,7 @@ namespace Core.DomainServices.Tests
             //Act
             try
             {
-                Packet? createdPacket = await packetService.AddPacket(name, daysFromNow, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId, productIdList);
+                Packet createdPacket = await packetService.AddPacket(name, daysFromNow, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId, productIdList);
             }
             catch (InvalidOperationException e)
             {
@@ -91,7 +91,7 @@ namespace Core.DomainServices.Tests
             //Act
             try
             {
-                Packet? updatedPacket = packetService.UpdatePacket(packet.Id, name, daysFromNow, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId, productIdList);
+                Packet updatedPacket = packetService.UpdatePacket(packet.Id, name, daysFromNow, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId, productIdList);
             }
             catch (InvalidOperationException e)
             {
@@ -124,7 +124,7 @@ namespace Core.DomainServices.Tests
             //Act
             try
             {
-                Packet? deletedPacket = packetService.DeletePacket(packet.Id);
+                Packet deletedPacket = packetService.DeletePacket(packet.Id);
             }
             catch (InvalidOperationException e)
             {
@@ -158,7 +158,7 @@ namespace Core.DomainServices.Tests
             //Act
             try
             {
-                Packet? packetWithReservation = packetService.AddReservation(student, packet.Id);
+                Packet packetWithReservation = packetService.AddReservation(student, packet.Id);
             }
             catch (InvalidOperationException e)
             {
@@ -196,7 +196,7 @@ namespace Core.DomainServices.Tests
             //Act
             try
             {
-                Packet? packetWithReservation = packetService.AddReservation(student, newPacket.Id);
+                Packet packetWithReservation = packetService.AddReservation(student, newPacket.Id);
             }
             catch (InvalidOperationException e)
             {
@@ -231,7 +231,7 @@ namespace Core.DomainServices.Tests
             //Act
             try
             {
-                Packet? packetWithReservation = packetService.AddReservation(student, packet.Id);
+                Packet packetWithReservation = packetService.AddReservation(student, packet.Id);
             }
             catch (InvalidOperationException e)
             {
@@ -262,12 +262,12 @@ namespace Core.DomainServices.Tests
             PacketService packetService = new(packetRepoMock.Object, productRepoMock.Object, studentRepoMock.Object, canteenEmployeeRepoMock.Object);
 
             //Act
-            Packet? packetWithReservation = null;
+            Packet packetWithReservation = null;
             try
             {
                 packetWithReservation = packetService.AddReservation(student, packet.Id);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 exceptionThrown = true;
             }
@@ -292,13 +292,13 @@ namespace Core.DomainServices.Tests
             bool exceptionThrown = false;
 
             PacketService packetService = new(packetRepoMock.Object, productRepoMock.Object, studentRepoMock.Object, canteenEmployeeRepoMock.Object);
-            Packet? createdPacket = null;
+            Packet createdPacket = null;
             //Act
             try
             {
                 createdPacket = await packetService.AddPacket(name, daysFromNow, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId, productIdList);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 exceptionThrown = true;
             }
@@ -327,13 +327,13 @@ namespace Core.DomainServices.Tests
             bool exceptionThrown = false;
 
             PacketService packetService = new(packetRepoMock.Object, productRepoMock.Object, studentRepoMock.Object, canteenEmployeeRepoMock.Object);
-            Packet? updatedPacket = null;
+            Packet updatedPacket = null;
             //Act
             try
             {
                 updatedPacket = packetService.UpdatePacket(packet.Id, name, daysFromNow, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId, productIdList);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 exceptionThrown = true;
             }
@@ -361,7 +361,7 @@ namespace Core.DomainServices.Tests
             //Act
             try
             {
-                Packet? createdPacket = await packetService.AddPacket(name, daysFromNow, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId, productIdList);
+                Packet createdPacket = await packetService.AddPacket(name, daysFromNow, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId, productIdList);
             }
             catch (InvalidOperationException e)
             {
@@ -388,7 +388,7 @@ namespace Core.DomainServices.Tests
 
             PacketService packetService = new(packetRepoMock.Object, productRepoMock.Object, studentRepoMock.Object, canteenEmployeeRepoMock.Object);
 
-            Packet? createdPacket = null;
+            Packet createdPacket = null;
             //Act
             try
             {
@@ -419,13 +419,13 @@ namespace Core.DomainServices.Tests
             bool exceptionThrown = false;
 
             PacketService packetService = new PacketService(packetRepoMock.Object, productRepoMock.Object, studentRepoMock.Object, canteenEmployeeRepoMock.Object);
-            Packet? updatedPacket = null;
+            Packet updatedPacket = null;
             //Act
             try
             {
                 updatedPacket = packetService.UpdatePacket(packet.Id, name, daysFromNow, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId, productIdList);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 exceptionThrown = true;
             }
@@ -449,13 +449,13 @@ namespace Core.DomainServices.Tests
             bool exceptionThrown = false;
 
             PacketService packetService = new PacketService(packetRepoMock.Object, productRepoMock.Object, studentRepoMock.Object, canteenEmployeeRepoMock.Object);
-            Packet? deletedPacket = null;
+            Packet deletedPacket = null;
             //Act
             try
             {
                 deletedPacket = packetService.DeletePacket(packet.Id);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 exceptionThrown = true;
             }
