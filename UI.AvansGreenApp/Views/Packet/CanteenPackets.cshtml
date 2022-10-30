@@ -9,7 +9,7 @@
             <h2 class="">Packets of canteen @Model.Canteen.Name in @Model.Canteen.City</h2>
             <a class="mb-2 btn btn-primary justify-content-end align-self-center" asp-area="" asp-controller="Packet" asp-action="AddPacket">Add new packet <span class="ms-1 glyphicon glyphicon-plus"></a>
         </div>
-        <p>This is an overview of all the packets make by employees of your canteen.</p>
+        <p>This is an overview of all the packets made by employees of your canteen.</p>
     </div>
     @if(Model.Packets.Count == 0)
     {
@@ -31,7 +31,7 @@
 
                                 </div>
                                 <div class=" flex">
-                                    <hr class="mt-1 mb-2 hr-text">
+                                    <hr class="mt-1 mb-2 hr-text" style="height:0.5px;">
                                     <div class="" style="min-height:80px">
                                         <div class="d-flex justify-content-between">
                                             <h5 class="card-title">@(packet.Name)</h5>

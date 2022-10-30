@@ -7,6 +7,5 @@ namespace UI.AvansGreenApp.Models
 
         public bool CanEdit { get; set; } = false;
 
-
     }
 }
