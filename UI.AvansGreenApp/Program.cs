@@ -1,4 +1,6 @@
 using Core.DomainServices.IRepos;
+using Core.DomainServices.IServices;
+using Core.DomainServices.Services;
 using Infrastructure.AG_EF;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -6,27 +8,24 @@ using UI.AvansGreenApp.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-
-var connectionString = builder.Configuration.GetConnectionString("AvansGreenDb");
-builder.Services.AddDbContext<AvansGreenDbContext>(options => options.UseSqlServer(connectionString).EnableSensitiveDataLogging(true));
-
-var userConnectionString = builder.Configuration.GetConnectionString("AuthDb");
-builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(userConnectionString));
-
-builder.Services.AddIdentity<AvansGreenUser, IdentityRole>()
+builder.Services
+    .AddScoped<ICanteenEmployeeRepository, CanteenEmployeeEFRepository>()
+    .AddScoped<IPacketRepository, PacketEFRepository>()
+    .AddScoped<IProductRepository, ProductEFRepository>()
+    .AddScoped<IStudentRepository, StudentEFRepository>()
+    .AddScoped<IPacketService, PacketService>()
+    .AddScoped<AuthDbSeed>()
+    // EF database
+    .AddDbContext<AvansGreenDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AvansGreenDb")))
+    // Identity database
+    .AddDbContext<AuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDb")))
+    .AddIdentity<AvansGreenUser, IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    //options.User.RequireUniqueEmail = true;
-});
-
+// Add policies (authentication enabled by Identity)
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("OnlyStudentsAndUp", policy => policy
@@ -37,23 +36,15 @@ builder.Services.AddAuthorization(options =>
         .RequireAuthenticatedUser()
         .RequireClaim("UserType", new string[] { "CanteenEmployee", "Admin" }));
 });
-builder.Services.AddScoped<AuthDbSeed>();
-builder.Services.AddScoped<ICanteenEmployeeRepository, CanteenEmployeeEFRepository>();
-builder.Services.AddScoped<IPacketRepository, PacketEFRepository>();
-builder.Services.AddScoped<IProductRepository, ProductEFRepository>();
-builder.Services.AddScoped<IStudentRepository, StudentEFRepository>();
+
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-builder.Services.AddDistributedMemoryCache();
-
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(2);
     options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
+    options.Cookie.IsEssential = false;
 });
-
 
 var app = builder.Build();
 
@@ -61,33 +52,33 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    await SeedDatabase();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseSession();
 
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseSession();
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
-await SeedData(app);
-
 app.Run();
 
-async Task SeedData(IApplicationBuilder app)
+// Add dummy data to authentication database
+async Task SeedDatabase()
 {
-    var seedData = app.ApplicationServices
-        .CreateScope().ServiceProvider
-        .GetRequiredService<AuthDbSeed>();
-
-    await seedData.EnsurePopulated();
+    using var scope = app.Services.CreateScope();
+    var dbSeeder = scope.ServiceProvider.GetRequiredService<AuthDbSeed>();
+    await dbSeeder.EnsurePopulated();
 }

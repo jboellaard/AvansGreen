@@ -14,7 +14,7 @@ namespace Core.DomainServices.IRepos
 
         IEnumerable<Packet> GetPacketsReserverdByStudentWithId(int studentId);
 
-        Task AddPacket(Packet packet);
+        Task<Packet?> AddPacket(Packet packet);
 
         Packet? UpdatePacket(Packet packet);
 

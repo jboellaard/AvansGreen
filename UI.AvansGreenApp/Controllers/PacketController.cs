@@ -1,5 +1,6 @@
 ﻿using Core.Domain;
 using Core.DomainServices.IRepos;
+using Core.DomainServices.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,25 +15,28 @@ namespace UI.AvansGreenApp.Controllers
         private readonly IProductRepository _productRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly ICanteenEmployeeRepository _canteenEmployeeRepository;
+        private readonly IPacketService _packetService;
 
         public PacketController(ILogger<PacketController> logger,
             IPacketRepository packetRepository,
             IProductRepository productRepository,
             IStudentRepository studentRepository,
-            ICanteenEmployeeRepository canteenEmployeeRepository)
+            ICanteenEmployeeRepository canteenEmployeeRepository,
+            IPacketService packetService)
         {
             _logger = logger;
             _packetRepository = packetRepository;
             _productRepository = productRepository;
             _studentRepository = studentRepository;
             _canteenEmployeeRepository = canteenEmployeeRepository;
+            _packetService = packetService;
         }
 
-        public void PrefillPacketOverview()
+        public void PrefillMealTypes()
         {
             var mealTypesList = new SelectList(Enum.GetValues(typeof(MealTypeId)).Cast<MealTypeId>().Select(mt => new SelectListItem
             {
-                Text = System.Text.RegularExpressions.Regex.Replace(mt.ToString(), "([A-Z])", " $1").Trim(),
+                Text = new MealType() { MealTypeId = mt }.ToString(),
                 Value = ((int)mt).ToString(),
             }).Prepend(new SelectListItem() { Text = "All meal types", Value = "0" }), "Value", "Text");
             ViewBag.MealTypes = mealTypesList;
@@ -40,37 +44,48 @@ namespace UI.AvansGreenApp.Controllers
 
         public IActionResult PacketOverview()
         {
-            FilterPacketsViewModel vm = new();
-            vm.Packets = _packetRepository.GetPacketsWithoutReservation().Where(p => p.PickUpTimeEnd >= DateTime.Now).ToList();
+            FilterPacketsViewModel vm = new()
+            {
+                Packets = _packetRepository.GetPacketsWithoutReservation().Where(p => p.PickUpTimeEnd >= DateTime.Now).ToList()
+            };
             if (User.FindFirst("UserType")?.Value is "Student")
             {
+                // Filter packets by city of student
                 Student student = _studentRepository.GetByStudentNr(User.Identity.Name);
-                // Filter list by location of student
                 vm.Packets = vm.Packets.Where(p => p.Canteen.City.ToUpper().Equals(student.CityOfSchool.ToUpper())).ToList();
-                // Add select options of city to the list
                 vm.CityList.Add(student.CityOfSchool);
             }
             vm.Packets.Sort((x, y) => (x.PickUpTimeEnd).CompareTo(y.PickUpTimeEnd));
-            PrefillPacketOverview();
+
+            PrefillMealTypes();
             return View(vm);
         }
 
         [HttpPost]
         public IActionResult FilterPackets(FilterPacketsViewModel vm)
         {
-            _logger.LogInformation("mealtype: " + vm.TypeOfMeal);
-            if (vm.CityList.Count != 0) vm.Packets = _packetRepository.GetPacketsWithoutReservation().Where(p => p.PickUpTimeEnd >= DateTime.Now && vm.CityList.Contains(p.Canteen.City, StringComparer.OrdinalIgnoreCase)).ToList();
-            else vm.Packets = _packetRepository.GetPacketsWithoutReservation().Where(p => p.PickUpTimeEnd >= DateTime.Now).ToList();
-            if (vm.TypeOfMeal != 0) vm.Packets = vm.Packets.Where(p => p.MealTypeId.Equals(vm.TypeOfMeal)).ToList();
-            PrefillPacketOverview();
+            vm.Packets = _packetRepository.GetPacketsWithoutReservation().Where(p => p.PickUpTimeEnd >= DateTime.Now).ToList();
+            if (vm.CityList.Count != 0)
+            {
+                vm.Packets = vm.Packets.Where(p => vm.CityList.Contains(p.Canteen.City, StringComparer.OrdinalIgnoreCase)).ToList();
+            }
+            if (vm.TypeOfMeal != 0)
+            {
+                vm.Packets = vm.Packets.Where(p => p.MealTypeId.Equals(vm.TypeOfMeal)).ToList();
+            }
+
+            PrefillMealTypes();
             return View("PacketOverview", vm);
         }
 
         public IActionResult UndoFilters()
         {
-            FilterPacketsViewModel vm = new();
-            vm.Packets = _packetRepository.GetPacketsWithoutReservation().Where(p => p.PickUpTimeEnd >= DateTime.Now).ToList();
-            PrefillPacketOverview();
+            FilterPacketsViewModel vm = new()
+            {
+                Packets = _packetRepository.GetPacketsWithoutReservation().Where(p => p.PickUpTimeEnd >= DateTime.Now).ToList()
+            };
+
+            PrefillMealTypes();
             return View("PacketOverview", vm);
         }
 
@@ -78,7 +93,7 @@ namespace UI.AvansGreenApp.Controllers
         [Authorize(Policy = "OnlyCanteenEmployeesAndUp")]
         public IActionResult CanteenPackets()
         {
-            CanteenPacketsViewModel vm = new CanteenPacketsViewModel();
+            CanteenPacketsViewModel vm = new();
             CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
             int? canteenId = canteenEmployee.CanteenId;
 
@@ -87,6 +102,7 @@ namespace UI.AvansGreenApp.Controllers
                 vm.Canteen = Canteen.FromId<Canteen>((int)canteenId);
                 vm.Packets = _packetRepository.GetPacketsFromCanteen((int)canteenId).ToList();
                 vm.Packets.Sort((x, y) => (x.PickUpTimeEnd).CompareTo(y.PickUpTimeEnd));
+
                 return View(vm);
             }
             return View(vm);
@@ -97,10 +113,12 @@ namespace UI.AvansGreenApp.Controllers
         {
             Student? student = _studentRepository.GetByStudentNr(User.Identity.Name);
             int? studentId = student.Id;
+
             if (studentId != null)
             {
                 List<Packet> packets = _packetRepository.GetPacketsReserverdByStudentWithId((int)studentId).ToList();
                 packets.Sort((x, y) => (x.PickUpTimeEnd).CompareTo(y.PickUpTimeEnd));
+
                 return View(packets);
             }
             return View(new List<Packet>());
@@ -109,66 +127,41 @@ namespace UI.AvansGreenApp.Controllers
         public IActionResult PacketDetail(int Id)
         {
             CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
-            Packet? packet = _packetRepository.GetById(Id);
-            PacketDetailViewModel vm = new() { Packet = packet };
-            if (canteenEmployee.CanteenId == packet.CanteenId) vm.CanEdit = true;
+            PacketDetailViewModel vm = new() { Packet = _packetRepository.GetById(Id) };
+            vm.CanEdit = canteenEmployee.CanteenId == vm.Packet.CanteenId;
+
             return View(vm);
         }
 
         [Authorize(Policy = "OnlyStudentsAndUp")]
         public IActionResult AddReservation(int Id)
         {
-            _logger.LogInformation("Inside addreservation");
-            Student? student = _studentRepository.GetByStudentNr(User.Identity.Name);
-            if (student != null)
+            try
             {
-
-                Packet packet = _packetRepository.GetById(Id)!;
-                if (!(packet.PickUpTimeEnd.Date < student.DateOfBirth.AddYears(18).Date && packet.IsAlcoholic))
-                {
-                    foreach (Packet reservedPacket in student.ReservedPackets)
-                    {
-                        if (reservedPacket.PickUpTimeStart.Date.Equals(packet.PickUpTimeStart.Date))
-                        {
-                            ModelState.AddModelError("OneReservationPerDay", "You cannot make more than one reservation per day.");
-                            return View("PacketDetail", new PacketDetailViewModel() { Packet = _packetRepository.GetById(Id) });
-                        }
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError("18PlusPackage", "You are too young to reserve a packet with alcohol.");
-                }
-
-                if (ModelState.IsValid)
-                {
-                    packet.StudentId = student.Id;
-                    Packet? updatedPacket = _packetRepository.AddReservationToPacket(packet);
-                    if (updatedPacket == null) ModelState.AddModelError("UnableToAddReservation", "Could not add reservation, please try again later.");
-                    else return RedirectToAction("MyReservations");
-                }
+                Packet packet = _packetService.AddReservation(_studentRepository.GetByStudentNr(User.Identity.Name), Id);
             }
-            _logger.LogInformation("Something went wrong, returning view again");
-            return View("PacketDetail", new PacketDetailViewModel() { Packet = _packetRepository.GetById(Id) });
+            catch (Exception e)
+            {
+                ModelState.AddModelError("ReservationError", e.Message);
+                return View("PacketDetail", new PacketDetailViewModel() { Packet = _packetRepository.GetById(Id) });
+            }
+            return RedirectToAction("MyReservations");
         }
 
         [Authorize(Policy = "OnlyStudentsAndUp")]
         public IActionResult DeleteReservation(int Id)
         {
-            _logger.LogInformation("Inside deletereservation");
-            Student? student = _studentRepository.GetByStudentNr(User.Identity.Name);
-            if (student != null)
+            try
             {
-                Packet? packet = _packetRepository.DeleteReservation(Id);
-                if (packet != null)
-                {
-                    List<Packet> packets = _packetRepository.GetPacketsReserverdByStudentWithId(student.Id).ToList();
-                    packets.Sort((x, y) => (x.PickUpTimeEnd).CompareTo(y.PickUpTimeEnd));
-                    return View("MyReservations", packets);
-                }
+                _packetService.DeleteReservation(_studentRepository.GetByStudentNr(User.Identity.Name), Id);
             }
-            ModelState.AddModelError("ReservationNotRemoved", "Reservation could not be cancelled, please try again later");
-            return View("PacketDetail", new PacketDetailViewModel() { Packet = _packetRepository.GetById(Id) });
+            catch (Exception e)
+            {
+                ModelState.AddModelError("ReservationNotRemoved", e.Message);
+                return View("PacketDetail", new PacketDetailViewModel() { Packet = _packetRepository.GetById(Id) });
+            }
+
+            return RedirectToAction("MyReservations");
         }
 
         [Authorize(Policy = "OnlyCanteenEmployeesAndUp")]
@@ -185,26 +178,17 @@ namespace UI.AvansGreenApp.Controllers
 
         private void PrefillSelectOptions(NewPacketViewModel vm)
         {
-            Canteen? canteen = null;
-            try
-            {
-                CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
-                int? canteenId = canteenEmployee.CanteenId;
-                canteen = CanteenEnumerable.FromId<Canteen>((int)canteenId);
-            }
-            catch (Exception e)
-            {
-                ModelState.AddModelError("CanteenNotFound", "Could not get your canteen location");
-            }
-
+            Canteen canteen = CanteenEnumerable.FromId<Canteen>(vm.CanteenId);
             var list = Enum.GetValues(typeof(MealTypeId)).Cast<MealTypeId>();
-            if (!canteen.HasWarmMeals) list = Enum.GetValues(typeof(MealTypeId)).Cast<MealTypeId>().Where(mt => !canteen.HasWarmMeals && mt != MealTypeId.WarmMeal);
+            if (!canteen.HasWarmMeals)
+            {
+                list = list.Where(mt => !canteen.HasWarmMeals && mt != MealTypeId.WarmMeal);
+            }
             var mealTypesList = new SelectList(list.Select(mt => new SelectListItem
             {
-                Text = System.Text.RegularExpressions.Regex.Replace(mt.ToString(), "([A-Z])", " $1").Trim(),
+                Text = new MealType() { MealTypeId = mt }.ToString(),
                 Value = ((int)mt).ToString(),
-            }), "Value", "Text");
-            _logger.LogInformation("After select items." + mealTypesList.Count());
+            }), "Value", "Text"); ;
             ViewBag.MealTypes = mealTypesList;
 
             var days = new List<SelectListItem>()
@@ -216,7 +200,6 @@ namespace UI.AvansGreenApp.Controllers
             ViewBag.Days = days;
 
             vm.AllProducts = _productRepository.GetProducts().ToList();
-
         }
 
         [Authorize(Policy = "OnlyCanteenEmployeesAndUp")]
@@ -228,34 +211,20 @@ namespace UI.AvansGreenApp.Controllers
             {
                 try
                 {
-                    CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
-                    int? canteenId = canteenEmployee.CanteenId;
-                    _logger.LogInformation("id: " + canteenId);
-                    if (canteenId != null)
-                    {
-                        vm.PickUpTimeStart = vm.PickUpTimeStart.AddDays(int.Parse(vm.PickUpDaysFromNow!));
-                        vm.PickUpTimeEnd = vm.PickUpTimeEnd.AddDays(int.Parse(vm.PickUpDaysFromNow!));
+                    int daysToAdd = 0;
+                    if (vm.PickUpDaysFromNow != null) daysToAdd = int.Parse(vm.PickUpDaysFromNow);
+                    Packet? packet = await _packetService.AddPacket(vm.PacketName, daysToAdd, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId, ProductIdList);
 
-                        Packet newPacket = new(vm.PacketName!, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, (int)canteenId);
-                        await _packetRepository.AddPacket(newPacket);
-
-                        foreach (int id in ProductIdList)
-                        {
-                            newPacket.Products.Add(new PacketProduct(newPacket.Id, id));
-                        }
-                        await _packetRepository.AddProductsToPacket(newPacket.Products);
-                        return RedirectToAction("CanteenPackets");
-                    }
-
+                    if (packet != null) return RedirectToAction("CanteenPackets");
+                    ModelState.AddModelError("PacketCreationError", "Could not add packet, please try again later.");
                 }
                 catch (Exception e)
                 {
-                    ModelState.AddModelError("Error creating packet", e.Message);
+                    ModelState.AddModelError("PacketCreationError", e.Message);
                 }
             }
 
             PrefillSelectOptions(vm);
-
             return View(vm);
         }
 
@@ -280,8 +249,8 @@ namespace UI.AvansGreenApp.Controllers
                 Price = packet.Price,
                 TypeOfMeal = packet.MealTypeId,
                 CanteenId = packet.CanteenId
-
             };
+
             foreach (PacketProduct packetProduct in packet.Products)
             {
                 model.ProductIdList.Add(packetProduct.ProductId);
@@ -301,20 +270,9 @@ namespace UI.AvansGreenApp.Controllers
             {
                 try
                 {
-                    vm.PickUpTimeStart = vm.PickUpTimeStart.AddDays(int.Parse(vm.PickUpDaysFromNow!));
-                    vm.PickUpTimeEnd = vm.PickUpTimeEnd.AddDays(int.Parse(vm.PickUpDaysFromNow!));
-
-                    Packet newPacket = new(vm.PacketName!, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId);
-                    newPacket.Id = Id;
-                    _logger.LogInformation("empty list? : " + newPacket.Products.Count);
-                    foreach (int productId in ProductIdList)
-                    {
-                        _logger.LogInformation("product" + productId);
-                        newPacket.Products.Add(new PacketProduct(newPacket.Id, productId));
-                    }
-                    _logger.LogInformation("canteenid" + vm.CanteenId);
-                    Packet? updatedPacket = _packetRepository.UpdatePacket(newPacket);
-                    return RedirectToAction("CanteenPackets");
+                    Packet? updatedPacket = _packetService.UpdatePacket(Id, vm.PacketName, int.Parse(vm.PickUpDaysFromNow), vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId, ProductIdList);
+                    if (updatedPacket != null) return RedirectToAction("CanteenPackets");
+                    else ModelState.AddModelError("Error updating packet", "Could not update this packet, please try again later.");
                 }
                 catch (Exception e)
                 {
@@ -323,29 +281,23 @@ namespace UI.AvansGreenApp.Controllers
             }
 
             PrefillSelectOptions(vm);
-
             return View(vm);
         }
 
         [Authorize(Policy = "OnlyCanteenEmployeesAndUp")]
         public IActionResult DeletePacket(int Id)
         {
-            Packet packet = _packetRepository.GetById(Id)!;
-            if (packet.StudentId.HasValue && packet.PickUpTimeEnd >= DateTime.Now)
+            try
             {
-                ModelState.AddModelError("AlreadyReservedError", "This packet has a reservation and cannot be removed");
-                return View("PacketDetail", new PacketDetailViewModel() { Packet = _packetRepository.GetById(Id) });
+                Packet? packet = _packetService.DeletePacket(Id);
+                if (packet != null) return RedirectToAction("CanteenPackets");
+                else ModelState.AddModelError("DeletionError", "Could not delete this packet, please try again later.");
             }
-            else
+            catch (Exception e)
             {
-                packet = _packetRepository.DeletePacket(packet.Id);
-                if (packet == null)
-                {
-                    ModelState.AddModelError("AlreadyReservedError", "Packet could not be removed, please try again later");
-                    return View("PacketDetail", new PacketDetailViewModel() { Packet = _packetRepository.GetById(Id), CanEdit = true });
-                }
+                ModelState.AddModelError("DeletionError", e.Message);
             }
-            return RedirectToAction("CanteenPackets");
+            return View("PacketDetail", new PacketDetailViewModel() { Packet = _packetRepository.GetById(Id) });
         }
 
         [Authorize(Policy = "OnlyCanteenEmployeesAndUp")]
@@ -356,13 +308,13 @@ namespace UI.AvansGreenApp.Controllers
             var model = new NewPacketViewModel()
             {
                 PacketName = packet.Name,
-                PickUpDaysFromNow = ((packet.PickUpTimeStart.Date - DateTime.Now.Date).Days).ToString(),
+                PickUpDaysFromNow = "0",
                 PickUpTimeStart = packet.PickUpTimeStart,
                 PickUpTimeEnd = packet.PickUpTimeEnd,
                 IsAlcoholic = packet.IsAlcoholic,
                 Price = packet.Price,
                 TypeOfMeal = packet.MealTypeId,
-                CanteenId = packet.CanteenId
+                CanteenId = packet.CanteenId,
             };
             foreach (PacketProduct packetProduct in packet.Products)
             {
@@ -383,18 +335,9 @@ namespace UI.AvansGreenApp.Controllers
             {
                 try
                 {
-                    vm.PickUpTimeStart = vm.PickUpTimeStart.AddDays(int.Parse(vm.PickUpDaysFromNow!));
-                    vm.PickUpTimeEnd = vm.PickUpTimeEnd.AddDays(int.Parse(vm.PickUpDaysFromNow!));
-
-                    Packet newPacket = new(vm.PacketName!, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId);
-                    newPacket.Id = Id;
-                    foreach (int productId in ProductIdList)
-                    {
-                        newPacket.Products.Add(new PacketProduct(newPacket.Id, productId));
-                    }
-                    Packet? updatedPacket = _packetRepository.UpdatePacket(newPacket);
-                    return RedirectToAction("CanteenPackets");
-
+                    Packet? updatedPacket = _packetService.RenewPacket(Id, vm.PacketName, int.Parse(vm.PickUpDaysFromNow!), vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId, ProductIdList);
+                    if (updatedPacket != null) return RedirectToAction("CanteenPackets");
+                    else ModelState.AddModelError("Error updating packet", "Could not renew this packet, please try again later.");
                 }
                 catch (Exception e)
                 {
