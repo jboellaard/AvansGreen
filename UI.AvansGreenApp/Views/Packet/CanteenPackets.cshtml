@@ -7,7 +7,7 @@
     <div class="border-bottom ">
         <div class="pb-2 d-flex justify-content-between">
             <h2 class="">Packets of canteen @Model.Canteen.Name in @Model.Canteen.City</h2>
-            <a class="mb-2 btn btn-primary justify-content-end align-self-center" asp-area="" asp-controller="Packet" asp-action="AddPacket">Add new packet <span class="ms-1 glyphicon glyphicon-plus"></a>
+            <a class="mb-2 btn btn-primary justify-content-end align-self-center" asp-area="" asp-controller="Packet" asp-action="AddPacket">Add new packet <span class="ms-1 glyphicon glyphicon-plus"></span></a>
         </div>
         <p>This is an overview of all the packets made by employees of your canteen.</p>
     </div>
@@ -58,7 +58,7 @@
                                         }
                                         else if (packet.PickUpTimeEnd < DateTime.Now)
                                         {
-                                            <a class="btn btn-primary" asp-action="RenewPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)">Renew <span class="glyphicon glyphicon-refresh"></a>
+                                            <a class="btn btn-primary" asp-action="RenewPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)">Renew <span class="glyphicon glyphicon-refresh"></span></a>
                                         }  
                                         @if (!packet.StudentId.HasValue || packet.PickUpTimeEnd < DateTime.Now) {
                                             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal@(packet.Id)">

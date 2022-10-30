@@ -94,7 +94,7 @@ namespace UI.AvansGreenApp.Controllers
         public IActionResult CanteenPackets()
         {
             CanteenPacketsViewModel vm = new();
-            CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
+            CanteenEmployee canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
             int? canteenId = canteenEmployee.CanteenId;
 
             if (canteenId != null)
@@ -111,7 +111,7 @@ namespace UI.AvansGreenApp.Controllers
         [Authorize(Policy = "OnlyStudentsAndUp")]
         public IActionResult MyReservations()
         {
-            Student? student = _studentRepository.GetByStudentNr(User.Identity.Name);
+            Student student = _studentRepository.GetByStudentNr(User.Identity.Name);
             int? studentId = student.Id;
 
             if (studentId != null)
@@ -126,10 +126,15 @@ namespace UI.AvansGreenApp.Controllers
 
         public IActionResult PacketDetail(int Id)
         {
-            CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
             PacketDetailViewModel vm = new() { Packet = _packetRepository.GetById(Id) };
-            vm.CanEdit = canteenEmployee.CanteenId == vm.Packet.CanteenId;
-
+            if (User.FindFirst("UserType")?.Value is "CanteenEmployee")
+            {
+                CanteenEmployee canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
+                if (canteenEmployee != null)
+                {
+                    vm.CanEdit = canteenEmployee.CanteenId == vm.Packet.CanteenId;
+                }
+            }
             return View(vm);
         }
 
@@ -168,7 +173,7 @@ namespace UI.AvansGreenApp.Controllers
         [HttpGet]
         public IActionResult AddPacket()
         {
-            CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
+            CanteenEmployee canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
             var model = new NewPacketViewModel() { CanteenId = canteenEmployee.CanteenId };
 
             PrefillSelectOptions(model);
@@ -213,7 +218,7 @@ namespace UI.AvansGreenApp.Controllers
                 {
                     int daysToAdd = 0;
                     if (vm.PickUpDaysFromNow != null) daysToAdd = int.Parse(vm.PickUpDaysFromNow);
-                    Packet? packet = await _packetService.AddPacket(vm.PacketName, daysToAdd, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId, ProductIdList);
+                    Packet packet = await _packetService.AddPacket(vm.PacketName, daysToAdd, vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId, ProductIdList);
 
                     if (packet != null) return RedirectToAction("CanteenPackets");
                     ModelState.AddModelError("PacketCreationError", "Could not add packet, please try again later.");
@@ -270,7 +275,7 @@ namespace UI.AvansGreenApp.Controllers
             {
                 try
                 {
-                    Packet? updatedPacket = _packetService.UpdatePacket(Id, vm.PacketName, int.Parse(vm.PickUpDaysFromNow), vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId, ProductIdList);
+                    Packet updatedPacket = _packetService.UpdatePacket(Id, vm.PacketName, int.Parse(vm.PickUpDaysFromNow), vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId, ProductIdList);
                     if (updatedPacket != null) return RedirectToAction("CanteenPackets");
                     else ModelState.AddModelError("Error updating packet", "Could not update this packet, please try again later.");
                 }
@@ -289,7 +294,7 @@ namespace UI.AvansGreenApp.Controllers
         {
             try
             {
-                Packet? packet = _packetService.DeletePacket(Id);
+                Packet packet = _packetService.DeletePacket(Id);
                 if (packet != null) return RedirectToAction("CanteenPackets");
                 else ModelState.AddModelError("DeletionError", "Could not delete this packet, please try again later.");
             }
@@ -335,7 +340,7 @@ namespace UI.AvansGreenApp.Controllers
             {
                 try
                 {
-                    Packet? updatedPacket = _packetService.RenewPacket(Id, vm.PacketName, int.Parse(vm.PickUpDaysFromNow!), vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId, ProductIdList);
+                    Packet updatedPacket = _packetService.RenewPacket(Id, vm.PacketName, int.Parse(vm.PickUpDaysFromNow!), vm.PickUpTimeStart, vm.PickUpTimeEnd, vm.IsAlcoholic, vm.Price, vm.TypeOfMeal, vm.CanteenId, ProductIdList);
                     if (updatedPacket != null) return RedirectToAction("CanteenPackets");
                     else ModelState.AddModelError("Error updating packet", "Could not renew this packet, please try again later.");
                 }
