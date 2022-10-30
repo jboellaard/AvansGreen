@@ -1,7 +1,4 @@
 ﻿@model NewPacketViewModel
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{  
     if (Model.PickUpTimeStart.Equals(default(DateTime)))
     {
@@ -10,6 +7,7 @@
         Model.PickUpTimeEnd = today.AddHours(20);
     }
 }
+<input asp-for="CanteenId" hidden />
 <div class="form-group pb-3 row">
     <label class="col-4 align-self-center" asp-for="PacketName">Packet name:</label>
     <div class="col-8"><input class="form-control" required placeholder="Use a descriptive name" asp-for="PacketName" /></div>

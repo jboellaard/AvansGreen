@@ -24,17 +24,6 @@ namespace Infrastructure.AG_EF
             return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Products).ThenInclude(pp => pp.Product).ThenInclude(pr => pr.ProductImage).SingleOrDefault(packet => packet.Id == id);
         }
 
-        //public void PreLoad()
-        //{
-        //    var firstPacket = _context.Packets.FirstOrDefault();
-
-        //    if (firstPacket != null)
-        //    {
-        //        _context.Entry(firstPacket).Collection(packet => packet.Products).Load();
-        //        _context.Entry(firstPacket).Reference(packet => packet.ReservedByStudent).Load();
-        //    }
-        //}
-
         public IEnumerable<Packet> Filter(Func<Packet, bool> filterExpression)
         {
             foreach (var packet in _context.Packets)
@@ -46,10 +35,11 @@ namespace Infrastructure.AG_EF
             }
         }
 
-        public async Task AddPacket(Packet newPacket)
+        public async Task<Packet?> AddPacket(Packet newPacket)
         {
-            _context.Packets.Add(newPacket);
+            Packet packet = _context.Packets.Add(newPacket).Entity;
             await _context.SaveChangesAsync();
+            return packet;
         }
 
         public Packet? UpdatePacket(Packet packet)
