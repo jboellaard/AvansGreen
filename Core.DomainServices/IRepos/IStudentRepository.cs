@@ -5,7 +5,7 @@ namespace Core.DomainServices.IRepos
     public interface IStudentRepository
     {
         IEnumerable<Student> GetStudents();
-        Student? GetById(int id);
-        Student? GetByStudentNr(string studentNr);
+        Student GetById(int id);
+        Student GetByStudentNr(string studentNr);
     }
 }

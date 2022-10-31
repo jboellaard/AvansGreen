@@ -19,12 +19,12 @@ namespace Infrastructure.AG_EF
             return _context.Students;
         }
 
-        public Student? GetById(int id)
+        public Student GetById(int id)
         {
             return _context.Students.Include(s => s.ReservedPackets).SingleOrDefault(student => student.Id == id);
         }
 
-        public Student? GetByStudentNr(string studentNr)
+        public Student GetByStudentNr(string studentNr)
         {
             return _context.Students.Include(s => s.ReservedPackets).SingleOrDefault(student => student.StudentNr == studentNr);
         }
