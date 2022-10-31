@@ -19,7 +19,7 @@ namespace Infrastructure.AG_EF
             return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Products);
         }
 
-        public Packet? GetById(int id)
+        public Packet GetById(int id)
         {
             return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Products).ThenInclude(pp => pp.Product).ThenInclude(pr => pr.ProductImage).SingleOrDefault(packet => packet.Id == id);
         }
@@ -35,14 +35,14 @@ namespace Infrastructure.AG_EF
             }
         }
 
-        public async Task<Packet?> AddPacket(Packet newPacket)
+        public async Task<Packet> AddPacket(Packet newPacket)
         {
             Packet packet = _context.Packets.Add(newPacket).Entity;
             await _context.SaveChangesAsync();
             return packet;
         }
 
-        public Packet? UpdatePacket(Packet packet)
+        public Packet UpdatePacket(Packet packet)
         {
             var productToUpdate = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packet.Id);
 
@@ -70,7 +70,7 @@ namespace Infrastructure.AG_EF
             return packet;
         }
 
-        public Packet? DeletePacket(int packetId)
+        public Packet DeletePacket(int packetId)
         {
             var packetToRemove = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packetId);
             if (packetToRemove != null && packetToRemove.Student == null)
@@ -85,7 +85,7 @@ namespace Infrastructure.AG_EF
         {
             foreach (PacketProduct packetProduct in packetProducts)
             {
-                Product? product = _context.Products.SingleOrDefault(product => product.Id == packetProduct.ProductId);
+                Product product = _context.Products.SingleOrDefault(product => product.Id == packetProduct.ProductId);
                 if (product.IsAlcoholic)
                 {
                     Packet packet = _context.Packets.SingleOrDefault(packet => packet.Id == packetProduct.PacketId);
@@ -111,7 +111,7 @@ namespace Infrastructure.AG_EF
             return _context.Packets.Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Student).Where(p => p.Student == null);
         }
 
-        public Packet? AddReservationToPacket(Packet packet)
+        public Packet AddReservationToPacket(Packet packet)
         {
             var packetToUpdate = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packet.Id);
             if (packetToUpdate != null && packetToUpdate.Student == null)
@@ -125,7 +125,7 @@ namespace Infrastructure.AG_EF
             return null;
         }
 
-        public Packet? DeleteReservation(int packetId)
+        public Packet DeleteReservation(int packetId)
         {
             var packetToDeleteReservation = _context.Packets.Include(p => p.Student).FirstOrDefault(p => p.Id == packetId);
             packetToDeleteReservation.Student = null;

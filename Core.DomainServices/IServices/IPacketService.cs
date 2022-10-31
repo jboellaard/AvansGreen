@@ -4,7 +4,7 @@ namespace Core.DomainServices.IServices
 {
     public interface IPacketService
     {
-        Task<Packet?> AddPacket(string name,
+        Task<Packet> AddPacket(string name,
             int DaysFromNow,
             DateTime pickUpTimeStart,
             DateTime pickUpTimeEnd,
@@ -14,7 +14,7 @@ namespace Core.DomainServices.IServices
             int canteenId,
             List<int> productIdList);
 
-        Packet? UpdatePacket(int id,
+        Packet UpdatePacket(int id,
             string name,
             int DaysFromNow,
             DateTime pickUpTimeStart,
@@ -25,7 +25,7 @@ namespace Core.DomainServices.IServices
             int canteenId,
             List<int> productIdList);
 
-        Packet? RenewPacket(int id,
+        Packet RenewPacket(int id,
             string name,
             int DaysFromNow,
             DateTime pickUpTimeStart,
@@ -36,13 +36,13 @@ namespace Core.DomainServices.IServices
             int canteenId,
             List<int> productIdList);
 
-        Packet? DeletePacket(int id);
+        Packet DeletePacket(int id);
 
-        Packet? AddReservation(
+        Packet AddReservation(
             Student student,
             int packetId);
 
-        Packet? DeleteReservation(
+        Packet DeleteReservation(
             Student student,
             int packetId);
 

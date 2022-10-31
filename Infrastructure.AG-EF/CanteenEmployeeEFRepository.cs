@@ -18,12 +18,12 @@ namespace Infrastructure.AG_EF
             return _context.CanteenEmployees.Include(c => c.Canteen);
         }
 
-        public CanteenEmployee? GetById(int id)
+        public CanteenEmployee GetById(int id)
         {
             return _context.CanteenEmployees.Include(c => c.Canteen).SingleOrDefault(canteenWorker => canteenWorker.Id == id);
         }
 
-        public CanteenEmployee? GetByEmployeeNr(string employeeNr)
+        public CanteenEmployee GetByEmployeeNr(string employeeNr)
         {
             return _context.CanteenEmployees.Include(c => c.Canteen).SingleOrDefault(canteenWorker => canteenWorker.EmployeeNr == employeeNr);
         }

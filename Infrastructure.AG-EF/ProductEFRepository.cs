@@ -11,7 +11,7 @@ namespace Infrastructure.AG_EF
             _context = context;
         }
 
-        public Product? GetById(int id)
+        public Product GetById(int id)
         {
             return _context.Products.SingleOrDefault(product => product.Id == id);
         }

@@ -23,7 +23,7 @@ namespace Core.DomainServices.Services
             _canteenEmployeeRepository = canteenEmployeeRepository;
         }
 
-        public async Task<Packet?> AddPacket(string name, int daysFromNow, DateTime pickUpTimeStart, DateTime pickUpTimeEnd, bool isAlcoholic, decimal price, MealTypeId typeOfMeal, int canteenId, List<int> productIdList)
+        public async Task<Packet> AddPacket(string name, int daysFromNow, DateTime pickUpTimeStart, DateTime pickUpTimeEnd, bool isAlcoholic, decimal price, MealTypeId typeOfMeal, int canteenId, List<int> productIdList)
         {
             Canteen canteen = CanteenEnumerable.FromId<Canteen>(canteenId);
             if (!canteen.HasWarmMeals && typeOfMeal.Equals(MealTypeId.WarmMeal))
@@ -39,7 +39,7 @@ namespace Core.DomainServices.Services
             }
 
             Packet newPacket = new(name, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId);
-            Packet? createdPacket = await _packetRepository.AddPacket(newPacket);
+            Packet createdPacket = await _packetRepository.AddPacket(newPacket);
 
             foreach (int id in productIdList)
             {
@@ -54,7 +54,7 @@ namespace Core.DomainServices.Services
             return createdPacket;
         }
 
-        public Packet? UpdatePacket(int id, string name, int daysFromNow, DateTime pickUpTimeStart, DateTime pickUpTimeEnd, bool isAlcoholic, decimal price, MealTypeId typeOfMeal, int canteenId, List<int> productIdList)
+        public Packet UpdatePacket(int id, string name, int daysFromNow, DateTime pickUpTimeStart, DateTime pickUpTimeEnd, bool isAlcoholic, decimal price, MealTypeId typeOfMeal, int canteenId, List<int> productIdList)
         {
             Packet packet = _packetRepository.GetById(id);
             if (packet.StudentId.HasValue)
@@ -64,7 +64,7 @@ namespace Core.DomainServices.Services
             return RenewPacket(id, name, daysFromNow, pickUpTimeStart, pickUpTimeEnd, isAlcoholic, price, typeOfMeal, canteenId, productIdList);
         }
 
-        public Packet? RenewPacket(int id, string name, int daysFromNow, DateTime pickUpTimeStart, DateTime pickUpTimeEnd, bool isAlcoholic, decimal price, MealTypeId typeOfMeal, int canteenId, List<int> productIdList)
+        public Packet RenewPacket(int id, string name, int daysFromNow, DateTime pickUpTimeStart, DateTime pickUpTimeEnd, bool isAlcoholic, decimal price, MealTypeId typeOfMeal, int canteenId, List<int> productIdList)
         {
             Canteen canteen = CanteenEnumerable.FromId<Canteen>(canteenId);
             if (!canteen.HasWarmMeals && typeOfMeal.Equals(MealTypeId.WarmMeal))
@@ -89,11 +89,11 @@ namespace Core.DomainServices.Services
                 }
                 newPacket.Products.Add(new PacketProduct(newPacket.Id, productId));
             }
-            Packet? updatedPacket = _packetRepository.UpdatePacket(newPacket);
+            Packet updatedPacket = _packetRepository.UpdatePacket(newPacket);
             return updatedPacket;
         }
 
-        public Packet? DeletePacket(int id)
+        public Packet DeletePacket(int id)
         {
             Packet packet = _packetRepository.GetById(id)!;
             if (packet.StudentId.HasValue && packet.PickUpTimeEnd >= DateTime.Now)
@@ -106,7 +106,7 @@ namespace Core.DomainServices.Services
             }
         }
 
-        public Packet? AddReservation(Student student, int packetId)
+        public Packet AddReservation(Student student, int packetId)
         {
             if (student != null)
             {
@@ -130,17 +130,17 @@ namespace Core.DomainServices.Services
                     throw new InvalidOperationException("You are too young to reserve a packet with alcohol.");
                 }
                 packet.StudentId = student.Id;
-                Packet? updatedPacket = _packetRepository.AddReservationToPacket(packet);
+                Packet updatedPacket = _packetRepository.AddReservationToPacket(packet);
                 if (updatedPacket != null) return updatedPacket;
             }
             throw new InvalidOperationException("Could not add reservation, please try again later.");
         }
 
-        public Packet? DeleteReservation(Student student, int packetId)
+        public Packet DeleteReservation(Student student, int packetId)
         {
             if (student != null)
             {
-                Packet? packet = _packetRepository.DeleteReservation(packetId);
+                Packet packet = _packetRepository.DeleteReservation(packetId);
                 if (packet != null)
                 {
                     return packet;
