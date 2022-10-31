@@ -57,18 +57,18 @@ namespace Infrastructure.AG_EF
 
             IEnumerable<ProductImage> productImages = new List<ProductImage>
             {
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/vodka.webp")) { Id = 1 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/panini.jpg")) { Id = 2 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/sandwich.jpg")) { Id = 3 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/apple.jpg")) { Id = 4 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/soup.jpg")) { Id = 5 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/baguette.webp")) { Id = 6 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/bacardi.webp")) { Id = 7 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/beer.jpg")) { Id = 8 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/banana.webp")) { Id = 9 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/tangerine.jpg")) { Id = 10 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/croquette.webp")) { Id = 11 },
-                new ProductImage(File.ReadAllBytes("././Infrastructure.AG-EF/productImages/cheesesouffle.jpg")) { Id = 12 }
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/vodka.webp")) { Id = 1 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/panini.jpg")) { Id = 2 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/sandwich.jpg")) { Id = 3 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/apple.jpg")) { Id = 4 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/soup.jpg")) { Id = 5 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/baguette.webp")) { Id = 6 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/bacardi.webp")) { Id = 7 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/beer.jpg")) { Id = 8 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/banana.webp")) { Id = 9 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/tangerine.jpg")) { Id = 10 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/croquette.webp")) { Id = 11 },
+                new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/cheesesouffle.jpg")) { Id = 12 }
             };
 
             IEnumerable<Product> products = new List<Product>
