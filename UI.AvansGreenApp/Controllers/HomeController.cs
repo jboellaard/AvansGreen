@@ -38,7 +38,7 @@ namespace UI.AvansGreenApp.Controllers
         {
             if (currentUserVM.TypeOfUser is TypeOfUser.Employee or TypeOfUser.Admin)
             {
-                CanteenEmployee? canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(currentUserVM.Nr);
+                CanteenEmployee canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(currentUserVM.Nr);
                 if (canteenEmployee != null)
                 {
                     HttpContext.Session.SetString("CanteenName", canteenEmployee.Canteen.Name);

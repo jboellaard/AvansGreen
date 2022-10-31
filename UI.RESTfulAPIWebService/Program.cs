@@ -1,11 +1,24 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//builder.Services.AddPooledDbContextFactory<OrderContext>(options => options.UseSqlite("Data Source=Orders.db")
+//    .EnableSensitiveDataLogging()).AddLogging(Console.WriteLine);
+
+// Configure JWT usage.
+builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.TokenValidationParameters.ValidateAudience = false;
+    options.TokenValidationParameters.ValidateIssuer = false;
+
+});
 
 var app = builder.Build();
 
