@@ -54,14 +54,14 @@ app.UseDeveloperExceptionPage();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    //app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 else
 {
-    await SeedDatabase();
-}
 
+}
+await SeedDatabase();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

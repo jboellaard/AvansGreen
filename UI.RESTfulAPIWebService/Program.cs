@@ -1,22 +1,32 @@
+using Infrastructure.AG_EF;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers().AddJsonOptions(o =>
+{
+    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+}); ; ;
 
-
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddPooledDbContextFactory<OrderContext>(options => options.UseSqlite("Data Source=Orders.db")
-//    .EnableSensitiveDataLogging()).AddLogging(Console.WriteLine);
+builder.Services.AddPooledDbContextFactory<AvansGreenDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AvansGreenDb"))
+    .EnableSensitiveDataLogging()).AddLogging(Console.WriteLine);
 
-// Configure JWT usage.
-//builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-//{
-//    options.TokenValidationParameters.ValidateAudience = false;
-//    options.TokenValidationParameters.ValidateIssuer = false;
+//Configure JWT usage.
+builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.TokenValidationParameters.ValidateAudience = false;
+    options.TokenValidationParameters.ValidateIssuer = false;
+    options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["BearerTokens:Key"]));
 
-//});
+});
 
 var app = builder.Build();
 
