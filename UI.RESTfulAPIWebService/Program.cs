@@ -19,6 +19,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddPooledDbContextFactory<AvansGreenDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AvansGreenDb"))
     .EnableSensitiveDataLogging()).AddLogging(Console.WriteLine);
 
+//builder.Services.AddDbContext<AuthDbContext>(options =>
+//                options.UseSqlServer(builder.Configuration.GetConnectionString("SecurityDb")));
+
+//builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedEmail = false)
+//    .AddEntityFrameworkStores<AuthDbContext>().AddDefaultTokenProviders();
+
 //Configure JWT usage.
 builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
 {

@@ -40,25 +40,8 @@ namespace Infrastructure.AG_EF
                     new Student("d.li@student.avans.nl", "s2184399", new DateTime(2005, 4, 12), "Diana Li", "Breda"){ PhoneNr = "0645678901" }
                 };
 
-                IEnumerable<ProductImage> productImages = new List<ProductImage>
-                {
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/vodka.webp")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/panini.jpg")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/sandwich.jpg")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/apple.jpg")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/soup.jpg")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/baguette.webp")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/bacardi.webp")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/beer.jpg")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/banana.webp")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/tangerine.jpg")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/croquette.webp")),
-                    new ProductImage(File.ReadAllBytes("../Infrastructure.AG-EF/productImages/cheesesouffle.jpg"))
-                };
-
                 await _context.CanteenEmployees.AddRangeAsync(canteenEmployees);
                 await _context.Students.AddRangeAsync(students);
-                await _context.ProductImages.AddRangeAsync(productImages);
                 //await _context.SaveChangesAsync();
                 _context.SaveChanges();
 
