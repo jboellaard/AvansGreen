@@ -1,16 +1,24 @@
+using Core.DomainServices.IRepos;
+using Infrastructure.AG_EF;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-//builder.Services.AddGraphQLServer()
-//    .RegisterDbContext<AvansGreenDbContext>(DbContextKind.Pooled)
-//    .AddProjections()
-//    .AddFiltering().AddSorting();
+builder.Services.AddControllers().AddJsonOptions(o =>
+{
+    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+}); ;
 
-//builder.Services.AddScoped<IPacketRepository, PacketEFRepository>()
-//    .AddDbContext<AvansGreenDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AvansGreenDb")));
+builder.Services.AddGraphQLServer()
+    .RegisterDbContext<AvansGreenDbContext>(DbContextKind.Pooled)
+    .AddProjections()
+    .AddFiltering().AddSorting();
 
+builder.Services.AddScoped<IPacketRepository, PacketEFRepository>()
+    .AddDbContext<AvansGreenDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AvansGreenDb")));
 
 
 builder.Services.AddEndpointsApiExplorer();

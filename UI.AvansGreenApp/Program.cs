@@ -49,6 +49,8 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
+// Finding issues (temporary, delete later!)
+app.UseDeveloperExceptionPage();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -57,9 +59,9 @@ if (!app.Environment.IsDevelopment())
 }
 else
 {
-
+    await SeedDatabase();
 }
-await SeedDatabase();
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
