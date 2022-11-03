@@ -16,10 +16,11 @@ builder.Services
     .AddScoped<IProductRepository, ProductEFRepository>()
     .AddScoped<IStudentRepository, StudentEFRepository>()
     .AddScoped<IPacketService, PacketService>()
+    .AddScoped<AvansGreenDbSeed>()
     .AddScoped<AuthDbSeed>()
     // EF database
     .AddDbContext<AvansGreenDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AvansGreenDb")))
-    // Identity database
+    // Identity database    
     .AddDbContext<AuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDb")))
     .AddIdentity<AvansGreenUser, IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>()
@@ -56,8 +57,9 @@ if (!app.Environment.IsDevelopment())
 }
 else
 {
-    await SeedDatabase();
+
 }
+await SeedDatabase();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -79,6 +81,9 @@ app.Run();
 async Task SeedDatabase()
 {
     using var scope = app.Services.CreateScope();
-    var dbSeeder = scope.ServiceProvider.GetRequiredService<AuthDbSeed>();
+    var dbSeeder = scope.ServiceProvider.GetRequiredService<AvansGreenDbSeed>();
     await dbSeeder.EnsurePopulated();
+
+    var authDbSeeder = scope.ServiceProvider.GetRequiredService<AuthDbSeed>();
+    await authDbSeeder.EnsurePopulated();
 }
