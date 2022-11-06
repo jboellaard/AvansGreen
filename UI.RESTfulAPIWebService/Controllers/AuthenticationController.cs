@@ -10,6 +10,7 @@ using UI.Security;
 
 namespace UI.RESTfulAPIWebService.Controllers
 {
+    [Route("api")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
