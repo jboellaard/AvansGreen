@@ -27,7 +27,7 @@ namespace UI.RESTfulAPIWebService.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("api/signin")]
+        [HttpPost("signin")]
         public async Task<IActionResult> SignIn([FromBody] AuthenticationCredentials authenticationCredentials)
         {
             var user = await _userMgr.FindByNameAsync(authenticationCredentials.Nr);
@@ -60,7 +60,7 @@ namespace UI.RESTfulAPIWebService.Controllers
             return BadRequest("Password or username incorrect.");
         }
 
-        [HttpPost("api/signout")]
+        [HttpPost("signout")]
         public new async Task<IActionResult> SignOut()
         {
             await _signInMgr.SignOutAsync();

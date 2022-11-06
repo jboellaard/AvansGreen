@@ -18,7 +18,7 @@ namespace UI.GraphQLService.GraphQL
 
         [UseFiltering]
         [UseSorting]
-        public IQueryable<Packet> availablepackets => _packetService.GetAll().Where(p => !p.StudentId.HasValue);
+        public IQueryable<Packet> availablepackets => _packetService.GetAll().Where(p => !p.StudentId.HasValue && p.PickUpTimeEnd >= DateTime.Now);
 
         public Packet packet(int id) => _packetService.GetPacketById(id);
     }
