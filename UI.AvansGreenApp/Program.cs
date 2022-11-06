@@ -4,7 +4,7 @@ using Core.DomainServices.Services;
 using Infrastructure.AG_EF;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using UI.AvansGreenApp.Security;
+using UI.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,9 +48,6 @@ builder.Services.AddSession(options =>
 });
 
 var app = builder.Build();
-
-// Finding issues (temporary, delete later!)
-app.UseDeveloperExceptionPage();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -59,9 +56,8 @@ if (!app.Environment.IsDevelopment())
 }
 else
 {
-
+    await SeedDatabase();
 }
-await SeedDatabase();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -79,7 +75,7 @@ app.MapControllerRoute(
 
 app.Run();
 
-// Add dummy data to authentication database
+// Add dummy data to the databases
 async Task SeedDatabase()
 {
     using var scope = app.Services.CreateScope();

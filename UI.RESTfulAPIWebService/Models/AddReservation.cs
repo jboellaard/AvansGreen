@@ -3,6 +3,6 @@
     public class AddReservation
     {
         int StudentId { get; set; }
-        int PacketIt { get; set; }
+        int PacketId { get; set; }
     }
 }

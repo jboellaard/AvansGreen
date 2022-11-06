@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
-namespace UI.AvansGreenApp.Security
+namespace UI.Security
 {
     public class AuthDbSeed
     {

@@ -16,6 +16,7 @@
     <ProjectReference Include="..\Core.DomainServices\Core.DomainServices.csproj" />
     <ProjectReference Include="..\Core.Domain\Core.Domain.csproj" />
     <ProjectReference Include="..\Infrastructure.AG-EF\Infrastructure.AG-EF.csproj" />
+    <ProjectReference Include="..\UI.Security\UI.Security.csproj" />
   </ItemGroup>
 
 </Project>
