@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace UI.RESTfulAPIWebService.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("")]
+    [Route("api")]
     [ApiController]
     public class PacketReservationController : ControllerBase
     {
