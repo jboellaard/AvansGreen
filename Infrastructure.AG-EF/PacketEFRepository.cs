@@ -19,6 +19,11 @@ namespace Infrastructure.AG_EF
             return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Products);
         }
 
+        public IEnumerable<Packet> GetPacketsWithProducts()
+        {
+            return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Products).ThenInclude(pp => pp.Product);
+        }
+
         public Packet GetById(int id)
         {
             return _context.Packets.Include(p => p.Student).Include(p => p.Canteen).Include(p => p.MealType).Include(p => p.Products).ThenInclude(pp => pp.Product).ThenInclude(pr => pr.ProductImage).SingleOrDefault(packet => packet.Id == id);

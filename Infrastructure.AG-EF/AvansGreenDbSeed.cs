@@ -21,6 +21,8 @@ namespace Infrastructure.AG_EF
 
             if (_context.CanteenEmployees.Count() == 0)
             {
+                _logger.LogInformation("Avans green database is being populated.");
+
                 IEnumerable<Canteen> canteens = CanteenEnumerable.GetAll<Canteen>();
 
                 IEnumerable<CanteenEmployee> canteenEmployees = new List<CanteenEmployee>
@@ -42,10 +44,7 @@ namespace Infrastructure.AG_EF
 
                 await _context.CanteenEmployees.AddRangeAsync(canteenEmployees);
                 await _context.Students.AddRangeAsync(students);
-                //await _context.SaveChangesAsync();
                 _context.SaveChanges();
-
-                _logger.LogInformation("Saved first set of changes");
 
                 IEnumerable<Product> products = new List<Product>
                 {
@@ -75,10 +74,7 @@ namespace Infrastructure.AG_EF
 
                 await _context.Products.AddRangeAsync(products);
                 await _context.Packets.AddRangeAsync(packets);
-                //await _context.SaveChangesAsync();
                 _context.SaveChanges();
-
-                _logger.LogInformation("Saved second set?");
 
                 IEnumerable<PacketProduct> productsInPacket = new List<PacketProduct>
                 {
@@ -96,10 +92,9 @@ namespace Infrastructure.AG_EF
                     new PacketProduct(packets.ElementAt(5).Id, products.ElementAt(9).Id)
                 };
                 await _context.ProductsInPacket.AddRangeAsync(productsInPacket);
-                //await _context.SaveChangesAsync();
                 _context.SaveChanges();
 
-                _logger.LogInformation("End of function.");
+                _logger.LogInformation("Avans green database has been populated.");
 
             }
         }

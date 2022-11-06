@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace UI.AvansGreenApp.Security
+namespace UI.Security
 {
     public class AvansGreenUser : IdentityUser
     {

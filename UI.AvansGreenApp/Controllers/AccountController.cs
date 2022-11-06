@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UI.AvansGreenApp.Models;
-using UI.AvansGreenApp.Security;
+using UI.Security;
 
 namespace UI.AvansGreenApp.Controllers;
 

@@ -5,6 +5,7 @@ namespace Core.DomainServices.IRepos
     public interface IPacketRepository
     {
         IEnumerable<Packet> GetPackets();
+        IEnumerable<Packet> GetPacketsWithProducts();
         Packet GetById(int id);
         IEnumerable<Packet> Filter(Func<Packet, bool> filterExpressie);
 
