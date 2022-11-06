@@ -8,16 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace UI.RESTfulAPIWebService.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/packets")]
+    [Route("api")]
     [ApiController]
-    public class PacketController : ControllerBase
+    public class PacketReservationController : ControllerBase
     {
-        private readonly ILogger<PacketController> _logger;
+        private readonly ILogger<PacketReservationController> _logger;
         private readonly IPacketRepository _packetRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly IPacketService _packetService;
 
-        public PacketController(ILogger<PacketController> logger,
+        public PacketReservationController(ILogger<PacketReservationController> logger,
             IPacketRepository packetRepository,
             IStudentRepository studentRepository,
             IPacketService packetService)
@@ -28,7 +28,21 @@ namespace UI.RESTfulAPIWebService.Controllers
             _packetService = packetService;
         }
 
-        [HttpPost("{id}/reservations")]
+        [HttpGet("reservations")]
+        public ActionResult<List<Packet>> GetReservations()
+        {
+            var user = User.Identity;
+            if (user == null) return BadRequest("User not logged in.");
+            Student student = _studentRepository.GetByStudentNr(user.Name);
+            if (student != null)
+            {
+                return student.ReservedPackets.ToList();
+            }
+            return BadRequest("The logged in user could not be found in the student database.");
+        }
+
+
+        [HttpPost("packets/{id}/reservation")]
         public ActionResult<Packet> AddReservation(int id)
         {
             var user = User.Identity;
@@ -50,7 +64,7 @@ namespace UI.RESTfulAPIWebService.Controllers
             return BadRequest("The logged in user could not be found in the student database.");
         }
 
-        [HttpDelete("{id}/reservations")]
+        [HttpDelete("packets/{id}/reservation")]
         public ActionResult<Packet> DeleteReservation(int id)
         {
             var user = User.Identity;
