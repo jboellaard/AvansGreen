@@ -27,15 +27,14 @@ builder.Services
     .AddScoped<ICanteenEmployeeRepository, CanteenEmployeeEFRepository>()
     .AddScoped<IProductRepository, ProductEFRepository>()
     .AddScoped<IPacketService, PacketService>()
-    .AddDbContext<AvansGreenDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AvansGreenDb"))
-    .EnableSensitiveDataLogging()).AddLogging(Console.WriteLine);
+    .AddDbContext<AvansGreenDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AvansGreenDb")));
 
 builder.Services
-        .AddDbContext<AuthDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDb")))
-        .AddIdentity<AvansGreenUser, IdentityRole>(options => options.SignIn.RequireConfirmedEmail = false)
-        .AddEntityFrameworkStores<AuthDbContext>()
-        .AddDefaultTokenProviders();
+    .AddDbContext<AuthDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDb")))
+    .AddIdentity<AvansGreenUser, IdentityRole>(options => options.SignIn.RequireConfirmedEmail = false)
+    .AddEntityFrameworkStores<AuthDbContext>()
+    .AddDefaultTokenProviders();
 
 //Configure JWT usage.
 builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
@@ -49,7 +48,6 @@ builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.Authenticati
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -60,8 +58,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-//app.MapControllers();
 
 
 app.UseEndpoints(endpoints =>

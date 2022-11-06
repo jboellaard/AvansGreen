@@ -7,16 +7,12 @@ namespace UI.GraphQLService.Services
 {
     public class PacketsGraphQLService : IPacketsGraphQLService
     {
-        #region Property  
         private readonly AvansGreenDbContext _context;
-        #endregion
 
-        #region Constructor  
         public PacketsGraphQLService(AvansGreenDbContext context)
         {
             _context = context;
         }
-        #endregion
 
         public IQueryable<Packet> GetAll()
         {

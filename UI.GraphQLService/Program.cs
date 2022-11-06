@@ -8,7 +8,6 @@ using UI.GraphQLService.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services
     .AddScoped<IPacketsGraphQLService, PacketsGraphQLService>()
     .AddScoped<IPacketRepository, PacketEFRepository>()
@@ -23,14 +22,13 @@ builder.Services
     .AddSorting();
 
 
-
 var app = builder.Build();
 
 app.UseRouting();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapGraphQL("/api/packets");
+    endpoints.MapGraphQL("/graphql/packets");
 });
 
 if (app.Environment.IsDevelopment())

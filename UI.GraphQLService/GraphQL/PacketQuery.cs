@@ -5,16 +5,12 @@ namespace UI.GraphQLService.GraphQL
 {
     public class PacketQuery
     {
-        #region Property  
         private readonly IPacketsGraphQLService _packetService;
-        #endregion
 
-        #region Constructor  
         public PacketQuery(IPacketsGraphQLService packetService)
         {
             _packetService = packetService;
         }
-        #endregion
 
         [UseFiltering]
         [UseSorting]
