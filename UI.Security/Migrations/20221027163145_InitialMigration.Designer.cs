@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace UI.AvansGreenApp.Migrations
+namespace UI.Security.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
     [Migration("20221027163145_InitialMigration")]
