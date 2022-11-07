@@ -99,7 +99,7 @@ namespace UI.AvansGreenApp.Controllers
 
             if (canteenId != null)
             {
-                vm.Canteen = Canteen.FromId<Canteen>((int)canteenId);
+                vm.Canteen = CanteenEnumerable.FromId<Canteen>((int)canteenId);
                 vm.Packets = _packetRepository.GetPacketsFromCanteen((int)canteenId).ToList();
                 vm.Packets.Sort((x, y) => (x.PickUpTimeEnd).CompareTo(y.PickUpTimeEnd));
 
@@ -176,12 +176,12 @@ namespace UI.AvansGreenApp.Controllers
             CanteenEmployee canteenEmployee = _canteenEmployeeRepository.GetByEmployeeNr(User.Identity.Name);
             var model = new NewPacketViewModel() { CanteenId = canteenEmployee.CanteenId };
 
-            PrefillSelectOptions(model);
+            PrefillPacketForm(model);
 
             return View(model);
         }
 
-        private void PrefillSelectOptions(NewPacketViewModel vm)
+        private void PrefillPacketForm(NewPacketViewModel vm)
         {
             Canteen canteen = CanteenEnumerable.FromId<Canteen>(vm.CanteenId);
             var list = Enum.GetValues(typeof(MealTypeId)).Cast<MealTypeId>();
@@ -229,7 +229,7 @@ namespace UI.AvansGreenApp.Controllers
                 }
             }
 
-            PrefillSelectOptions(vm);
+            PrefillPacketForm(vm);
             return View(vm);
         }
 
@@ -261,7 +261,7 @@ namespace UI.AvansGreenApp.Controllers
                 model.ProductIdList.Add(packetProduct.ProductId);
             }
 
-            PrefillSelectOptions(model);
+            PrefillPacketForm(model);
 
             return View(model);
         }
@@ -285,7 +285,7 @@ namespace UI.AvansGreenApp.Controllers
                 }
             }
 
-            PrefillSelectOptions(vm);
+            PrefillPacketForm(vm);
             return View(vm);
         }
 
@@ -326,7 +326,7 @@ namespace UI.AvansGreenApp.Controllers
                 model.ProductIdList.Add(packetProduct.ProductId);
             }
 
-            PrefillSelectOptions(model);
+            PrefillPacketForm(model);
 
             return View(model);
         }
@@ -350,7 +350,7 @@ namespace UI.AvansGreenApp.Controllers
                 }
             }
 
-            PrefillSelectOptions(vm);
+            PrefillPacketForm(vm);
 
             return View(vm);
         }

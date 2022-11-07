@@ -7,41 +7,42 @@
 
 <div class="row">
     <div class="border-bottom">
-    <h2 class="pb-2">Available packets</h2>
-    <p>This is an overview of all available packets for the coming few days. You can filter by location and the type of packet you would prefer.</p>
+        <h2 class="pb-2">Available packets</h2>
+        <p>This is an overview of all available packets for the coming few days. You can filter by location and the type of packet you would prefer.</p>
     </div>
     <div class="col-12 col-sm-3 mx-4 mx-sm-auto my-3">
         <form asp-action="FilterPackets" asp-controller="Packet" method="post">
-        <div class="row justify-content-start" id="filter-sort-example-filters" data-mdb-auto-filter="true">
-            <h4>Filter packets</h4>
-            <label asp-for="CityList" class="control-label">Locations:</label>
-            @for (var i = 0; i < Model.CityOptions.Count; i++)
-            {
-                <label for="product-@(i)"><input type="checkbox" @if(Model.CityList.Contains(Model.CityOptions.ElementAt(i))) { <text>checked</text> } name="CityList" id="product-@(i)" 
-                    value="@(Model.CityOptions.ElementAt(i))" >@(Model.CityOptions.ElementAt(i))</label>
-            }
+            <div class="row justify-content-start" id="filter-sort-example-filters" data-mdb-auto-filter="true">
+                <h4>Filter packets</h4>
+                <label asp-for="CityList" class="control-label">Locations:</label>
+                @for (var i = 0; i < Model.CityOptions.Count; i++)
+                {
+                    <label for="product-@(i)"><input type="checkbox" @if(Model.CityList.Contains(Model.CityOptions.ElementAt(i))) { <text>checked</text> } name="CityList" id="product-@(i)" 
+                        value="@(Model.CityOptions.ElementAt(i))" >@(Model.CityOptions.ElementAt(i))</label>
+                }
 
-            <div class="col-12 my-3">
-                <div class="row">
-                    <div class="col">
-                        <label asp-for="TypeOfMeal">Type of meal:</label>
-                        <select class="form-select" title="selectList" asp-for="TypeOfMeal" asp-items="@ViewBag.MealTypes"></select>
+                <div class="col-12 my-3">
+                    <div class="row">
+                        <div class="col">
+                            <label asp-for="TypeOfMeal">Type of meal:</label>
+                            <select class="form-select" title="selectList" asp-for="TypeOfMeal" asp-items="@ViewBag.MealTypes"></select>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a asp-action="UndoFilters" asp-controller="Packet" class="btn btn-outline-primary">Undo filters</a>
-            </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a asp-action="UndoFilters" asp-controller="Packet" class="btn btn-outline-primary">Undo filters</a>
+                </div>
 
-        </div>
+            </div>
         </form>
     </div>
     
     <div class="col-12 col-sm-9 mt-3 border-start">
         <div class="container">
-            @if(Model.Packets.Count == 0){
+            @if(Model.Packets.Count == 0)
+            {
                 <p>There are no packets to be displayed at this moment, please check again later.</p>
             }
         
@@ -77,9 +78,7 @@
                                     </div>
 
                                     <div class="card-text d-flex justify-content-between  ">
-                                        @*<div>*@
                                         <a class="align-self-center" asp-action="PacketDetail" asp-controller="Packet" asp-route-Id="@(packet.Id)">Read more</a>
-                                        @*</div>*@
                                         <div class="justify-content-end">
                                             @if (authenticated)
                                             {
@@ -105,5 +104,4 @@
             </div>
         </div>
     </div>
-
 </div>

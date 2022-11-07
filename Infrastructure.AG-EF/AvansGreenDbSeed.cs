@@ -42,10 +42,6 @@ namespace Infrastructure.AG_EF
                     new Student("d.li@student.avans.nl", "s2184399", new DateTime(2005, 4, 12), "Diana Li", "Breda"){ PhoneNr = "0645678901" }
                 };
 
-                await _context.CanteenEmployees.AddRangeAsync(canteenEmployees);
-                await _context.Students.AddRangeAsync(students);
-                _context.SaveChanges();
-
                 IEnumerable<Product> products = new List<Product>
                 {
                     new Product("Vodka", true){ ProductImageId = 1 },
@@ -72,6 +68,8 @@ namespace Infrastructure.AG_EF
                     new Packet("Fruit assortment", DateTime.Now.Date.AddDays(1).AddHours(10), DateTime.Now.Date.AddDays(1).AddHours(14), false, 6m, MealTypeId.Drink, canteens.ElementAt(2).Id)
                 };
 
+                await _context.CanteenEmployees.AddRangeAsync(canteenEmployees);
+                await _context.Students.AddRangeAsync(students);
                 await _context.Products.AddRangeAsync(products);
                 await _context.Packets.AddRangeAsync(packets);
                 _context.SaveChanges();

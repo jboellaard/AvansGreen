@@ -40,13 +40,15 @@
 
                         @if (authenticated) 
                         {
-                            @if(claimValue is "Student" or "Admin"){
+                            @if(claimValue is "Student" or "Admin")
+                            {
                                 <li class="nav-item px-2">
                                     <a class="nav-link" asp-area="" asp-controller="Packet" asp-action="MyReservations">My reservations</a>
                                 </li>
                             }
 
-                            @if(claimValue is "CanteenEmployee" or "Admin"){
+                            @if(claimValue is "CanteenEmployee" or "Admin")
+                            {
                                 string canteenName = HttpContextAccessor.HttpContext.Session.GetString("CanteenName") ?? "My canteen";
                                 <li class="dropdown">
                                     <a class="nav-link dropdown-toggle px-2" data-bs-toggle="dropdown" href="#">
@@ -66,7 +68,8 @@
                         }                
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        @if (authenticated) {
+                        @if (authenticated) 
+                        {
                             <li class="dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
                                     @(displayName)
@@ -76,7 +79,9 @@
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout">Log out</a></li>
                                 </ul>
                             </li>
-                        } else {                            
+                        } 
+                        else 
+                        {                            
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
                             </li>
@@ -99,7 +104,7 @@
         <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
             <li class="ms-3"><a class="text-muted" href="https://www.avans.nl/" target="_blank" rel="noopener noreferrer">Avans</a></li>
         </ul>
-  </footer>
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
