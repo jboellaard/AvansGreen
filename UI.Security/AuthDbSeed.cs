@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace UI.Security
@@ -6,14 +7,18 @@ namespace UI.Security
     public class AuthDbSeed
     {
         private readonly UserManager<AvansGreenUser> _userManager;
+        private readonly AuthDbContext _context;
 
-        public AuthDbSeed(UserManager<AvansGreenUser> userManager)
+        public AuthDbSeed(AuthDbContext context, UserManager<AvansGreenUser> userManager)
         {
             _userManager = userManager;
+            _context = context;
         }
 
         public async Task EnsurePopulated()
         {
+            _context.Database.Migrate();
+
             string password = "Secret123$";
 
             string adminUniqueNr = "a0000000";

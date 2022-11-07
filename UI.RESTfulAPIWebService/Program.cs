@@ -47,6 +47,11 @@ builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.Authenticati
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    await SeedDatabase();
+}
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -65,3 +70,14 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
+
+// Add dummy data to the databases
+async Task SeedDatabase()
+{
+    using var scope = app.Services.CreateScope();
+    var dbSeeder = scope.ServiceProvider.GetRequiredService<AvansGreenDbSeed>();
+    await dbSeeder.EnsurePopulated();
+
+    var authDbSeeder = scope.ServiceProvider.GetRequiredService<AuthDbSeed>();
+    await authDbSeeder.EnsurePopulated();
+}
