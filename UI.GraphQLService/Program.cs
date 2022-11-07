@@ -34,6 +34,15 @@ app.UseEndpoints(endpoints =>
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    await SeedDatabase();
 }
 
 app.Run();
+
+// Add dummy data to the databases
+async Task SeedDatabase()
+{
+    using var scope = app.Services.CreateScope();
+    var dbSeeder = scope.ServiceProvider.GetRequiredService<AvansGreenDbSeed>();
+    await dbSeeder.EnsurePopulated();
+}
