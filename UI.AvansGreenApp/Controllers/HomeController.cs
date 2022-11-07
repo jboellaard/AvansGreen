@@ -1,11 +1,9 @@
 ﻿using Core.Domain;
 using Core.DomainServices.IRepos;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using UI.AvansGreenApp.Models;
-using UI.Security;
 
 namespace UI.AvansGreenApp.Controllers
 {
@@ -16,21 +14,18 @@ namespace UI.AvansGreenApp.Controllers
         private readonly IProductRepository _productRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly ICanteenEmployeeRepository _canteenEmployeeRepository;
-        private readonly UserManager<AvansGreenUser> _userManager;
 
         public HomeController(ILogger<HomeController> logger,
             IPacketRepository packetRepository,
             IProductRepository productRepository,
             IStudentRepository studentRepository,
-            ICanteenEmployeeRepository canteenEmployeeRepository,
-            UserManager<AvansGreenUser> userMgr)
+            ICanteenEmployeeRepository canteenEmployeeRepository)
         {
             _logger = logger;
             _packetRepository = packetRepository;
             _productRepository = productRepository;
             _studentRepository = studentRepository;
             _canteenEmployeeRepository = canteenEmployeeRepository;
-            _userManager = userMgr;
         }
 
         [Authorize]

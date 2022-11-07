@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace UI.AvansGreenApp.Migrations
+namespace UI.Security.Migrations
 {
     public partial class InitialMigration : Migration
     {

@@ -6,9 +6,9 @@ namespace UI.AvansGreenApp.Models
     public class NewPacketViewModel
     {
         [Required]
-        public string? PacketName { get; set; }
+        public string PacketName { get; set; }
         [Required]
-        public string? PickUpDaysFromNow { get; set; }
+        public string PickUpDaysFromNow { get; set; }
         [Required]
         public DateTime PickUpTimeStart { get; set; }
         public DateTime PickUpTimeEnd { get; set; }

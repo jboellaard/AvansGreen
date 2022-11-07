@@ -84,7 +84,7 @@ namespace Core.Domain.Tests
         {
             //Arrange
             bool exceptionThrown = false;
-            Student? student = null;
+            Student student = null;
 
             //Act
             try
@@ -107,7 +107,7 @@ namespace Core.Domain.Tests
         {
             //Arrange
             bool exceptionThrown = false;
-            Student? student = null;
+            Student student = null;
 
             //Act
             try

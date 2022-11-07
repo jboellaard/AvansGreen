@@ -38,7 +38,7 @@ builder.Services.AddAuthorization(options =>
         .RequireClaim("UserType", new string[] { "CanteenEmployee", "Admin" }));
 });
 
-
+// Add session
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSession(options =>
 {
@@ -48,10 +48,11 @@ builder.Services.AddSession(options =>
 });
 
 var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    //app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 else

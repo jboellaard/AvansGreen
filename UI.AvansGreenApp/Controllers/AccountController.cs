@@ -10,14 +10,12 @@ public class AccountController : Controller
 {
     private readonly UserManager<AvansGreenUser> _userManager;
     private readonly SignInManager<AvansGreenUser> _signInManager;
-    //private readonly IConfiguration _configuration;
 
     public AccountController(UserManager<AvansGreenUser> userMgr,
         SignInManager<AvansGreenUser> signInMgr)
     {
         _userManager = userMgr;
         _signInManager = signInMgr;
-        //_configuration = configuration;
     }
 
     [AllowAnonymous]

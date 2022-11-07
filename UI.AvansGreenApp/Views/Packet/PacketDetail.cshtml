@@ -20,22 +20,22 @@
             @if (authenticated){
                 @if (Model.CanEdit)
                 {                     
-                        @if (!packet.StudentId.HasValue && packet.PickUpTimeEnd >= DateTime.Now)
-                        {
-                            <a class="btn btn-primary ms-2" asp-action="EditPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)">Edit <span class="glyphicon glyphicon-pencil"></span></a>
-                        }
-                        else if (packet.PickUpTimeEnd < DateTime.Now)
-                        {
-                            <a class="btn btn-primary ms-2" asp-action="RenewPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)">Renew <span class="glyphicon glyphicon-refresh"></span></a>
-                        }
-                        @if (!packet.StudentId.HasValue)
-                        {
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal@(packet.Id)">
-                                Delete <span class="glyphicon glyphicon-trash"></span>
-                            </button>
-                            <partial name="_DeletePacketModal" model="packet.Id" />
-                        }
+                    @if (!packet.StudentId.HasValue && packet.PickUpTimeEnd >= DateTime.Now)
+                    {
+                        <a class="btn btn-primary ms-2" asp-action="EditPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)">Edit <span class="glyphicon glyphicon-pencil"></span></a>
                     }
+                    else if (packet.PickUpTimeEnd < DateTime.Now)
+                    {
+                        <a class="btn btn-primary ms-2" asp-action="RenewPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)">Renew <span class="glyphicon glyphicon-refresh"></span></a>
+                    }
+                    @if (!packet.StudentId.HasValue)
+                    {
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal@(packet.Id)">
+                            Delete <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        <partial name="_DeletePacketModal" model="packet.Id" />
+                    }
+                }
             }
             @if (authenticated)
             {
@@ -58,7 +58,8 @@
             </div>
         
 
-        @if(packet.Products.Count > 0){
+        @if(packet.Products.Count > 0)
+        {
             <p>The packet will contain products similar to the ones shown here. This means that the contents of the actual packet may be a bit different.</p>
 
 
@@ -85,26 +86,27 @@
                                     int numberOfIterations = (packet.Products.Count - i) > 2 ? 2 : packet.Products.Count % 3 - 1;
                                     for (int j = 1; j <= numberOfIterations; j++)
                                     {
-                                                <div class="card d-none d-md-block">
-                                                    @{
-                                                Product nextProduct = packet.Products.ElementAt(i + j).Product;
-                                                    }
-                                                    <img src="@(nextProduct.ProductImage.GetSrc("webp"))" class="card-img-top" alt="Image of @(nextProduct.Name)">
-                                                    <div class="card-body border-top d-flex justify-content-between">
-                                                        <h5 class="card-title">@(nextProduct.Name)</h5>
-                                                        @if (nextProduct.IsAlcoholic)
+                                        <div class="card d-none d-md-block">
+                                            @{
+                                        Product nextProduct = packet.Products.ElementAt(i + j).Product;
+                                            }
+                                            <img src="@(nextProduct.ProductImage.GetSrc("webp"))" class="card-img-top" alt="Image of @(nextProduct.Name)">
+                                            <div class="card-body border-top d-flex justify-content-between">
+                                                <h5 class="card-title">@(nextProduct.Name)</h5>
+                                                @if (nextProduct.IsAlcoholic)
                                                 {
-                                                            <div class="justify-content-end"><p class="text-danger"><b>18+</b></p></div>
+                                                    <div class="justify-content-end"><p class="text-danger"><b>18+</b></p></div>
                                                 }
-                                                    </div>
-                                                </div>
+                                            </div>
+                                        </div>
                                     }
                                 }
                             </div>
                         </div>
                     }
                 </div>
-                @if(packet.Products.Count > 3){
+                @if(packet.Products.Count > 3)
+                {
                     <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>

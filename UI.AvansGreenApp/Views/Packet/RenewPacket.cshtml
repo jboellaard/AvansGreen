@@ -11,12 +11,12 @@
     <form class="g-3" asp-action="RenewPacket" asp-controller="Packet" method="post">
         <partial name="_PacketForm" model="Model" />
         <div class="d-flex justify-content-between">
-        <button type="button" class="btn btn-primary" id="modalid">
-            Renew packet
-        </button>
-        <a type="button" class="btn btn-secondary justify-content-end" asp-action="CanteenPackets" asp-controller="Packet">
-            Cancel
-        </a>
+            <button type="button" class="btn btn-primary" id="modalid">
+                Renew packet
+            </button>
+            <a type="button" class="btn btn-secondary justify-content-end" asp-action="CanteenPackets" asp-controller="Packet">
+                Cancel
+            </a>
         </div>
         <div class="modal checkmodal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
