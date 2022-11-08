@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddScoped<IPacketsGraphQLService, PacketsGraphQLService>()
     .AddScoped<IPacketRepository, PacketEFRepository>()
+    .AddScoped<AvansGreenDbSeed>()
     .AddDbContext<AvansGreenDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AvansGreenDb")))
     .AddScoped<PacketQuery>();
 

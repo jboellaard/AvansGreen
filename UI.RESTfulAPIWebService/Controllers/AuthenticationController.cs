@@ -10,6 +10,7 @@ using UI.Security;
 
 namespace UI.RESTfulAPIWebService.Controllers
 {
+
     [Route("api")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -28,6 +29,14 @@ namespace UI.RESTfulAPIWebService.Controllers
             _configuration = configuration;
         }
 
+        /* 
+         * Route for signing in. This endpoint is only usable for students of Avans, more specifically students that are in the Avans Green database.
+         * Use the student Nr as "Nr" and password as "Password" to get a token for this user. Apart from the token the user is also logged in and their 
+         * credentials are used in other calls.
+         */
+        /// <summary>
+        /// Gets the price for a ticker symbol
+        /// </summary>
         [HttpPost("signin")]
         public async Task<IActionResult> SignIn([FromBody] AuthenticationCredentials authenticationCredentials)
         {
@@ -50,15 +59,15 @@ namespace UI.RESTfulAPIWebService.Controllers
                         var handler = new JwtSecurityTokenHandler();
                         var securityToken = new JwtSecurityTokenHandler().CreateToken(securityTokenDescriptor);
 
-                        return Ok(new { Succes = true, Token = handler.WriteToken(securityToken), studentId = student.Id });
+                        return Ok(new AuthenticationResponse { Succes = true, Token = handler.WriteToken(securityToken), StudentId = student.Id });
                     }
                 }
                 else
                 {
-                    return NotFound(new { Value = "This user could not be found in the student database." });
+                    return NotFound(new AuthenticationResponse { ErrorMessage = "This user could not be found in the student database." });
                 }
             }
-            return BadRequest("Password or username incorrect.");
+            return BadRequest(new AuthenticationResponse { ErrorMessage = "Password or username incorrect." });
         }
 
         [HttpPost("signout")]

@@ -29,6 +29,7 @@ namespace UI.RESTfulAPIWebService.Controllers
         }
 
         [HttpGet("reservations")]
+        [Produces("application/json", "application/xml")]
         public ActionResult<List<Packet>> GetReservations()
         {
             var user = User.Identity;
@@ -43,6 +44,7 @@ namespace UI.RESTfulAPIWebService.Controllers
 
 
         [HttpPost("packets/{id}/reservation")]
+        [Produces("application/json", "application/xml")]
         public ActionResult<Packet> AddReservation(int id)
         {
             var user = User.Identity;
@@ -65,6 +67,7 @@ namespace UI.RESTfulAPIWebService.Controllers
         }
 
         [HttpDelete("packets/{id}/reservation")]
+        [Consumes("application/json")]
         public ActionResult<Packet> DeleteReservation(int id)
         {
             var user = User.Identity;

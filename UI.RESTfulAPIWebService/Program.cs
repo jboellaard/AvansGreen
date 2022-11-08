@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 using UI.Security;
@@ -13,13 +14,19 @@ using UI.Security;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers().AddJsonOptions(o =>
-{
-    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-});
+builder.Services.AddControllers()
+    .AddJsonOptions(o =>
+    {
+        o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    })
+.AddXmlSerializerFormatters()
+.AddXmlDataContractSerializerFormatters();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer()
+     .AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "RESTful API for managing reservations of a student", Version = "v1" });
+        });
 
 builder.Services
     .AddScoped<IPacketRepository, PacketEFRepository>()
@@ -27,6 +34,8 @@ builder.Services
     .AddScoped<ICanteenEmployeeRepository, CanteenEmployeeEFRepository>()
     .AddScoped<IProductRepository, ProductEFRepository>()
     .AddScoped<IPacketService, PacketService>()
+    .AddScoped<AvansGreenDbSeed>()
+    .AddScoped<AuthDbSeed>()
     .AddDbContext<AvansGreenDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AvansGreenDb")));
 
 builder.Services
