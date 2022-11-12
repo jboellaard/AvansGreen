@@ -29,7 +29,7 @@ namespace Infrastructure.AG_EF
                 {
                     new CanteenEmployee("a0000000", "Admin") { CanteenId = canteens.ElementAt(2).Id },
                     new CanteenEmployee("e1234567", "Naomi de Vries") { CanteenId = canteens.ElementAt(0).Id },
-                    new CanteenEmployee("e2345678", "Peter Smit") { CanteenId = canteens.ElementAt(1).Id },
+                    new CanteenEmployee("e2345678", "Peter Smit") { CanteenId = canteens.ElementAt(5).Id },
                     new CanteenEmployee("e3456789", "Lennart de Groot") { CanteenId = canteens.ElementAt(3).Id }
                 };
 

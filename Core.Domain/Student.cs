@@ -45,5 +45,6 @@ namespace Core.Domain
             Name = name;
             CityOfSchool = cityOfSchool;
         }
+
     }
 }

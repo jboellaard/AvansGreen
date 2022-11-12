@@ -1,0 +1,106 @@
+﻿@model FilterPacketsViewModel
+@{
+    ViewData["Title"] = "Packet overview";
+    var user = Model.CurrentUser;
+}
+
+<div class="row">
+    <div class="border-bottom">
+        <h2 class="pb-2">Available packets</h2>
+        <p>This is an overview of all available packets for the coming few days. You can filter by location and the type of packet you would prefer.</p>
+    </div>
+    <div class="col-12 col-sm-3 mx-4 mx-sm-auto my-3">
+        <form asp-action="FilterPackets" asp-controller="Packet" method="post">
+            <div class="row justify-content-start" id="filter-sort-example-filters" data-mdb-auto-filter="true">
+                <h4>Filter packets</h4>
+                <label asp-for="CityList" class="control-label">Locations:</label>
+                @for (var i = 0; i < Model.CityOptions.Count; i++)
+                {
+                    <label for="product-@(i)"><input type="checkbox" @if(Model.CityList.Contains(Model.CityOptions.ElementAt(i))) { <text>checked</text> } name="CityList" id="product-@(i)" 
+                        value="@(Model.CityOptions.ElementAt(i))" >@(Model.CityOptions.ElementAt(i))</label>
+                }
+
+                <div class="col-12 my-3">
+                    <div class="row">
+                        <div class="col">
+                            <label asp-for="TypeOfMeal">Type of meal:</label>
+                            <select class="form-select" title="selectList" asp-for="TypeOfMeal" asp-items="@ViewBag.MealTypes"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a asp-action="UndoFilters" asp-controller="Packet" class="btn btn-outline-primary">Undo filters</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    
+    <div class="col-12 col-sm-9 mt-3 border-start">
+        <div class="container">
+            @if(Model.Packets.Count == 0)
+            {
+                <p>There are no packets to be displayed at this moment, please check again later.</p>
+            }
+        
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4">
+                @foreach (Packet packet in Model.Packets)
+                {
+                    if (!packet.StudentId.HasValue || (user.UserType is "CanteenEmployee" or "Admin"))
+                    {
+                        <div class="col-12">
+                            <div class="card h-100" style=@(packet.PickUpTimeEnd < DateTime.Now ? "background-color:lightgrey" : packet.StudentId.HasValue? "background-color:lightyellow" : "")>
+                                <div class="card-body">
+                                    <div class="d-flex h-100 justify-content-between " style="color:black;">
+                                        <div>@(packet.PickUpTimeStart.ToString("M"))</div>
+                                        <div class="justify-content-end">
+                                            @(packet.PickUpTimeStart.ToString("HH:mm")) to @(packet.PickUpTimeEnd.ToString("HH:mm"))
+                                        </div>
+                                    </div>
+                                    <div class=" flex">
+                                        <hr class="mt-1 mb-2 hr-text" style="height:0.5px;">
+                                        <div class="" style="min-height:80px">
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="card-title">@(packet.Name)</h5>
+                                                @if(packet.IsAlcoholic) {
+                                                    <p class="text-danger ms-1"><b>18+</b></p>
+                                                }
+                                            </div>
+                                            <h6 class="card-subtitle mb-2 text-muted">@(packet.MealType.ToString())</h6>
+                                        </div>
+                                        <div style="color:#333;">
+                                            <p class="mb-1">Price: &euro;@(packet.Price)</p>
+                                            <p class="mb-1">Location: @(packet.Canteen.Name) in @(packet.Canteen.City)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-text d-flex justify-content-between  ">
+                                        <a class="align-self-center" asp-action="PacketDetail" asp-controller="Packet" asp-route-Id="@(packet.Id)">Read more</a>
+                                        <div class="justify-content-end">
+                                            @if (user.IsAuthenticated)
+                                            {
+                                                @if (user.UserType is "Student" or "Admin" && !packet.StudentId.HasValue && packet.PickUpTimeEnd >= DateTime.Now)
+                                                {
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reserveModal@(packet.Id)">
+                                                        Reserve
+                                                    </button>
+                                                    <partial name="_ReservePacketModal" model="@packet.Id" />
+                                                }
+                                                if (user.UserType is "CanteenWorker" or "Admin" && packet.StudentId.HasValue)
+                                                {
+                                                    <i class="align-self-center">Reserved</i>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

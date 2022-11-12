@@ -23,6 +23,7 @@ namespace Core.Domain
         public Canteen(int id, string name, string city, bool hasWarmMeals) : base(id, name, city, hasWarmMeals)
         {
         }
+
     }
 
     public abstract class CanteenEnumerable : IComparable

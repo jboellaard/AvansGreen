@@ -1,0 +1,114 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<AvansGreenUser> UserManager
+
+@{
+    var user = new AvansGreenUser() { FullName = "Anonymous" };
+    if (User.Identity.Name != null) user = await UserManager.FindByNameAsync(User.Identity.Name);
+    string displayName = user.FullName;
+
+    bool isAuthenticated = User.Identity!.IsAuthenticated;
+    var userType = User.FindFirst("UserType")?.Value;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AvansGreen</title>
+    <link rel="icon" href="~/agicon.ico">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/icons.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-dark navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+            <div class="container-fluid nav-elements-container">
+                <a class="navbar-brand p-0" asp-area="" asp-controller="Packet" asp-action="PacketOverview">
+                    <img src="~/logo-white.png" style="height:35px" alt="Logo Avans Green" />
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item px-2">
+                            <a class="nav-link" asp-area="" asp-controller="Packet" asp-action="PacketOverview">All packets</a>
+                        </li>
+
+                        @if (isAuthenticated) 
+                        {
+                            @if(userType is "Student" or "Admin")
+                            {
+                                <li class="nav-item px-2">
+                                    <a class="nav-link" asp-area="" asp-controller="Packet" asp-action="MyReservations">My reservations</a>
+                                </li>
+                            }
+
+                            @if(userType is "CanteenEmployee" or "Admin")
+                            {
+                                string canteenName = HttpContextAccessor.HttpContext.Session.GetString("CanteenName") ?? "My canteen";
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle px-2" data-bs-toggle="dropdown" href="#">
+                                        Manage packets
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">                                       
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="CanteenPackets">@(canteenName) packets</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Packet" asp-action="AddPacket">Add new packet</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                        }                
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        @if (isAuthenticated) 
+                        {
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                                    @(displayName)
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout">Log out</a></li>
+                                </ul>
+                            </li>
+                        } 
+                        else 
+                        {                            
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3 p-2">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 mt-4 border-top nav-elements-container">
+        <div class="cold-md-4 d-flex align-items-center">
+            <span>&copy; 2022 - AvansGreen</span>
+        </div>
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3"><a class="text-muted" href="https://www.avans.nl/" target="_blank" rel="noopener noreferrer">Avans</a></li>
+        </ul>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

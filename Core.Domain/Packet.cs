@@ -1,4 +1,5 @@
-﻿namespace Core.Domain
+﻿
+namespace Core.Domain
 {
     public class Packet
     {
@@ -33,6 +34,5 @@
         {
             Canteen = canteen;
         }
-
     }
 }
