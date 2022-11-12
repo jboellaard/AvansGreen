@@ -48,6 +48,7 @@ namespace UI.AG_StudentReservations.Controllers
         /// <response code="400">Returned if the credentials are invalid</response>
         /// <response code="404">Returned if the user cannot be found in the student database</response>
         [HttpPost("signin")]
+        [Produces("application/json", "application/xml")]
         public async Task<IActionResult> SignIn([FromBody] AuthenticationCredentials authenticationCredentials)
         {
             var user = await _userMgr.FindByNameAsync(authenticationCredentials.Nr);
@@ -85,10 +86,11 @@ namespace UI.AG_StudentReservations.Controllers
         /// </summary>
         /// <response code="200">Even if there is no signed in user, the method returns 200 as the result is no logged in users.</response>
         [HttpPost("signout")]
+        [Produces("application/json", "application/xml")]
         public new async Task<IActionResult> SignOut()
         {
             await _signInMgr.SignOutAsync();
-            return Ok();
+            return Ok("User signed out.");
         }
     }
 }
