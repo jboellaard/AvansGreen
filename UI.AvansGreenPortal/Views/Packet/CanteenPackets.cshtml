@@ -1,0 +1,79 @@
+﻿@model CanteenPacketsViewModel
+@{
+    ViewData["Title"] = "Canteen packets";
+}
+
+<div class="row">
+    <div class="border-bottom ">
+        <div class="pb-2 d-flex justify-content-between">
+            <h2 class="">Packets of canteen @Model.Canteen.Name in @Model.Canteen.City</h2>
+            <a class="mb-2 btn btn-primary justify-content-end align-self-center" asp-area="" asp-controller="Packet" asp-action="AddPacket">Add new packet <span class="ms-1 glyphicon glyphicon-plus"></span></a>
+        </div>
+        <p>This is an overview of all the packets made by employees of your canteen.</p>
+    </div>
+    @if(Model.Packets.Count == 0)
+    {
+        <p>There are no packets to be displayed at this moment.</p>
+    }
+    <div class="mt-3">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4">
+                @foreach (Packet packet in Model.Packets)
+                {
+                    <div class="col-12">
+                        <div class="card h-100" style=@(packet.PickUpTimeEnd < DateTime.Now ? "background-color:lightgrey" : packet.StudentId.HasValue? "background-color:lightyellow" : "")>
+                            <div class="card-body">
+                                <div class="d-flex h-100 justify-content-between " style="color:black;">
+                                    <div>@(packet.PickUpTimeStart.ToString("M"))</div>
+                                    <div class="justify-content-end">
+                                        @(packet.PickUpTimeStart.ToString("HH:mm")) to @(packet.PickUpTimeEnd.ToString("HH:mm"))
+                                    </div>
+                                </div>
+                                <div class=" flex">
+                                    <hr class="mt-1 mb-2 hr-text" style="height:0.5px;">
+                                    <div class="" style="min-height:80px">
+                                        <div class="d-flex justify-content-between">
+                                            <h5 class="card-title">@(packet.Name)</h5>
+                                            @if(packet.IsAlcoholic) {
+                                                <p class="text-danger ms-1"><b>18+</b></p>
+                                            }
+                                        </div>
+                                        <h6 class="card-subtitle mb-2 text-muted">@(packet.MealType.ToString())</h6>
+                                    </div>
+                                    <div style="color:#333;">
+                                        <p class="mb-1">Price: &euro;@(packet.Price)</p>
+                                        <p class="mb-1">Location: @(packet.Canteen.Name) in @(packet.Canteen.City)</p>
+                                    </div>
+                                </div>
+
+                                <div class="card-text d-flex justify-content-between">
+                                    <div class="align-self-center">
+                                    <a asp-action="PacketDetail" asp-controller="Packet" asp-route-Id="@(packet.Id)">Read more</a>
+                                    </div>
+                                    <div class="justify-content-end flex-shrink-0">
+                                        @if (!packet.StudentId.HasValue && packet.PickUpTimeEnd >= DateTime.Now)
+                                        {
+                                            <a class="btn btn-primary" asp-action="EditPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)"><span class="glyphicon glyphicon-pencil"></span></a>
+                                        }
+                                        else if ((packet.PickUpTimeEnd < DateTime.Now) && (packet.PickUpTimeEnd > DateTime.Now.AddDays(-1)))
+                                        {
+                                            <a class="btn btn-primary" asp-action="RenewPacket" asp-controller="Packet" asp-route-Id="@(packet.Id)">Renew <span class="glyphicon glyphicon-refresh"></span></a>
+                                        }  
+                                        @if (!packet.StudentId.HasValue || packet.PickUpTimeEnd < DateTime.Now) {
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal@(packet.Id)">
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                            </button>
+                                            <partial name="_DeletePacketModal" model="packet.Id" />                  
+                                        } else {
+                                            <i class="align-self-center">Reserved</i>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
