@@ -31,6 +31,8 @@ namespace UI.AG_StudentReservationsAPI.Models
             PickUpTimeEnd = packet.PickUpTimeEnd;
             if (packet.TimeOfPickUpByStudent != null)
                 TimeOfPickUpByStudent = (DateTime)packet.TimeOfPickUpByStudent;
+            IsAlcoholic = packet.IsAlcoholic;
+            Price = packet.Price;
             CanteenId = packet.CanteenId;
             if (packet.Canteen != null) Canteen = new CanteenDTO(packet.Canteen);
             MealTypeId = packet.MealTypeId;
